@@ -19,38 +19,38 @@ export const api_mixin = {
 				heap: 0,
 				// MQTT status
 				mqtt: {
-					status: "disabled", //Can be either disabled or connected or disconnected
+					status: "Unknown",
 				},
 				// PVOutput status
 				pvo: {
-					status: "disabled", //Can be either disabled or connected or disconnected
+					status: "Unknown",
 				},
 				// System status
 				loadEnabledTemp: false,
 				b:
 				{
-					charge: 30,
-					voltage: 13.5,
-					current: 1.45,
-					temperature: 25.0
+					charge: 0,
+					voltage: 0.0,
+					current: 0.0,
+					temperature: 0.0
 				},
 				l:
 				{
 					// Load status (On=true, Off=false)
 					enabled: false,
-					voltage: 13.5,
-					current: 1.56
+					voltage: 0.0,
+					current: 0.0
 				},
 				p:
 				{
-					voltage: 32.6,
-					current: 5.45
+					voltage: 0.0,
+					current: 0.0
 				},
 				s:
 				{
-					state: 2,
-					error: 0xFFFF0000,
-					temperature: 25.5
+					state: 0,
+					error: 0,
+					temperature: 0.0
 				},
 				network: {
 					wifi_client: {

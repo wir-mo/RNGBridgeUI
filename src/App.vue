@@ -655,7 +655,7 @@ export default {
     },
 
     system_errors() {
-      if (this.status.s.error & (0xffff0000 > 0)) {
+      if ((this.status.s.error & 0xffff0000) > 0) {
         let errors = [];
         let errorVal = 0x10000;
         for (var i = 1; i <= 15; ++i) {
@@ -666,6 +666,10 @@ export default {
             });
             errorVal = errorVal << 1;
           }
+        }
+        if (errors.length == 0) {
+          console.warn("Status seems to have an error, but no match was found");
+          errors = [{ error: "E0", tooltip: "No error" }];
         }
         return errors;
       }
