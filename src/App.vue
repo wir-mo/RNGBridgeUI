@@ -659,13 +659,13 @@ export default {
         let errors = [];
         let errorVal = 0x10000;
         for (var i = 1; i <= 15; ++i) {
-          if (errorVal & this.status.s.error) {
+          if ((this.status.s.error & errorVal) > 0) {
             errors.push({
               error: `E${i}`,
               tooltip: this.controllerErrors[errorVal],
             });
-            errorVal = errorVal << 1;
           }
+          errorVal = errorVal << 1;
         }
         return errors;
       }

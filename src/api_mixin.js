@@ -390,9 +390,8 @@ export const api_mixin = {
 			axios.get("/api/config").then(response => {
 				this.$set(this, "config", response.data);
 			}).catch(error => {
-				console.error(error)
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = "Could not request config";
+				this.m_dialog.message = `Could not request config: ${error}`;
 				this.m_dialog.show = true;
 			});
 		},
@@ -409,9 +408,8 @@ export const api_mixin = {
 					console.info("Updated control");
 				}
 			}).catch(error => {
-				console.error(error);
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = "Could not control RNGBridge";
+				this.m_dialog.message = `Could not control RNGBridge: ${error}`;
 				this.m_dialog.show = true;
 			});
 		},
@@ -428,17 +426,22 @@ export const api_mixin = {
 		api_save(config) {
 			axios.post("/api/config", config).then(response => {
 				if (response.data === "OK") {
-					alert("Config updated the ESP will reboot");
+					this.m_dialog.headline = "Info";
+					this.m_dialog.message = "Config updated. The page will reload now!";
+					this.m_dialog.show = true;
+					setTimeout(() => {
+						window.location.reload();
+					}, 3000);
 				} else {
-					alert("Error while updating the config: " + response.data);
-					console.error(response.data)
+					this.m_dialog.headline = "Error";
+					this.m_dialog.message = `Could not update config: ${response.data}`;
+					this.m_dialog.show = true;
 				}
 				this.request_config();
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = "Could not update config";
+				this.m_dialog.message = `Could not update config: ${error}`;
 				this.m_dialog.show = true;
-				console.error(error)
 			});
 		},
 		api_submit_ota() {
@@ -468,11 +471,10 @@ export const api_mixin = {
 				setTimeout(() => {
 					window.location.reload();
 				}, 3000);
-			}).catch(reason => {
-				console.debug(reason);
+			}).catch(error => {
 				this.status.ota.progress = 0;
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `The software update failed. ${reason}`;
+				this.m_dialog.message = `The software update failed. ${error}`;
 				this.m_dialog.show = true;
 			});
 		},
