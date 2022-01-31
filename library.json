@@ -1,0 +1,25 @@
+{
+	"name": "RNGBridge",
+	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/xxxxxxxxxxxx/xxxxxxxxxxxxxx.git"
+	},
+	"authors": [
+		{
+			"name": "Moritz Wirger",
+			"email": "lj.moritorii@web.de",
+			"url": "https://github.com/enwi"
+		}
+	],
+	"platforms": "*",
+	"export": {
+		"include": [
+			"cpp/*"
+		]
+	},
+	"build": {
+		"includeDir": "cpp",
+		"srcDir": "cpp"
+	}
+}

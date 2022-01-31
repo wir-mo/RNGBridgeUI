@@ -1,0 +1,482 @@
+import axios from "axios";
+
+export const api_mixin = {
+	data: function () {
+		return {
+			m_dialog: {
+				show: false,
+				headline: "",
+				message: "",
+			},
+			connectionState: 3,
+			status: {
+				ota: {
+					file: null,
+					progress: 0,
+					size: 0,
+				},
+				uptime: 0,
+				heap: 0,
+				// MQTT status
+				mqtt: {
+					status: "disabled", //Can be either disabled or connected or disconnected
+				},
+				// PVOutput status
+				pvo: {
+					status: "disabled", //Can be either disabled or connected or disconnected
+				},
+				// System status
+				loadEnabledTemp: false,
+				b:
+				{
+					charge: 30,
+					voltage: 13.5,
+					current: 1.45,
+					temperature: 25.0
+				},
+				l:
+				{
+					// Load status (On=true, Off=false)
+					enabled: false,
+					voltage: 13.5,
+					current: 1.56
+				},
+				p:
+				{
+					voltage: 32.6,
+					current: 5.45
+				},
+				s:
+				{
+					state: 2,
+					error: 0xFFFF0000,
+					temperature: 25.5
+				},
+				network: {
+					wifi_client: {
+						status: "disabled", //Can be either disabled or connected or disconnected
+						ip: "111.222.333.444",
+						netmask: "255.255.255.0",
+						dns: "1.3.4.5"
+					},
+					wifi_ap: {
+						status: "disabled", //Can be either disabled or enabled
+						ip: "111.222.333.444",
+					},
+					mac: "00:DE:AD:BE:EF:00",
+				},
+			},
+			config: {
+				wifi: {
+					client_enabled: false,
+					client_dhcp_enabled: true,
+					client_ssid: "YourWifi-AP",
+					client_has_password: false,
+					client_password: null,
+					client_ip: "111.222.333.444",
+					client_mask: "255.255.255.0",
+					client_gateway: "111.222.333.555",
+					client_dns: "111.222.333.555",
+					ap_enabled: true,
+					ap_ssid: "LedChristmasTree",
+					ap_has_password: false,
+					ap_password: null,
+				},
+				mqtt: {
+					enabled: false,
+					server: "111.222.333.444",
+					port: 1883,
+					id: "RNGBridge",
+					user: "xxx",
+					has_password: false,
+					password: null,
+					topic: "/rng",
+				},
+				pvo: {
+					enabled: false,
+					api_key: "",
+					system_id: 0,
+					time_offset: 0,
+				},
+			},
+		}
+	},
+	created() {
+		this.setupEventSource();
+	},
+	methods: {
+		setupEventSource() {
+			console.debug(`Connecting es: /events`);
+			let eventSource = new EventSource("/events");
+			this.connectionState = eventSource.readyState;
+			eventSource.onopen = () => {
+				this.connectionState = eventSource.readyState;
+				console.debug("EventSource opened");
+				this.request_config();
+			};
+			eventSource.onclose = () => {
+				this.connectionState = eventSource.readyState;
+				console.debug("EventSource closed");
+			};
+			eventSource.onerror = (event) => {
+				this.connectionState = eventSource.readyState;
+				console.debug(`EventSource error: ${event.type}`);
+			};
+			eventSource.onmessage = (event) => {
+				console.debug(`EventSource message: ${event.data}`);
+			};
+			eventSource.addEventListener('status', (event) => {
+				console.debug(`Event[status]: ${event.data}`);
+				let json = JSON.parse(event.data);
+
+				const uptime = json['uptime'];
+				if (uptime != null) {
+					this.status.uptime = uptime;
+				}
+
+				const heap = json['heap'];
+				if (heap != null) {
+					this.status.heap = heap;
+				}
+
+				this.checkForBatteryData(json);
+				this.checkForLoadData(json);
+				this.checkForPanelData(json);
+				this.checkForSystemData(json);
+				this.checkForNetworkData(json);
+				this.checkForConfig(json);
+			}, false);
+			eventSource.addEventListener('ota', (event) => {
+				console.debug(`Event[ota]: ${event.data}`);
+				this.status.ota.progress = event.data;
+			}, false);
+		},
+		checkForConfig(json) {
+			const wifi = json['wifi'];
+			if (wifi != null) {
+				const client_enabled = wifi["client_enabled"];
+				if (client_enabled != null) {
+					this.config.wifi.client_enabled = client_enabled;
+				}
+				const client_dhcp_enabled = wifi["client_dhcp_enabled"];
+				if (client_dhcp_enabled != null) {
+					this.config.wifi.client_dhcp_enabled = client_dhcp_enabled;
+				}
+				const client_ssid = wifi["client_ssid"];
+				if (client_ssid != null) {
+					this.config.wifi.client_ssid = client_ssid;
+				}
+				const client_has_password = wifi["client_has_password"];
+				if (client_has_password != null) {
+					this.config.wifi.client_has_password = client_has_password;
+				}
+				const client_password = wifi["client_password"];
+				if (client_password != null) {
+					this.config.wifi.client_password = client_password;
+				}
+				const client_ip = wifi["client_ip"];
+				if (client_ip != null) {
+					this.config.wifi.client_ip = client_ip;
+				}
+				const client_mask = wifi["client_mask"];
+				if (client_mask != null) {
+					this.config.wifi.client_mask = client_mask;
+				}
+				const client_gateway = wifi["client_gateway"];
+				if (client_gateway != null) {
+					this.config.wifi.client_gateway = client_gateway;
+				}
+				const client_dns = wifi["client_dns"];
+				if (client_dns != null) {
+					this.config.wifi.client_dns = client_dns;
+				}
+				const ap_enabled = wifi["ap_enabled"];
+				if (ap_enabled != null) {
+					this.config.wifi.ap_enabled = ap_enabled;
+				}
+				const ap_ssid = wifi["ap_ssid"];
+				if (ap_ssid != null) {
+					this.config.wifi.ap_ssid = ap_ssid;
+				}
+				const ap_has_password = wifi["ap_has_password"];
+				if (ap_has_password != null) {
+					this.config.wifi.ap_has_password = ap_has_password;
+				}
+				const ap_password = wifi["ap_password"];
+				if (ap_password != null) {
+					this.config.wifi.ap_password = ap_password;
+				}
+			}
+
+			const mqtt = json['mqtt'];
+			if (mqtt != null) {
+				const enabled = mqtt["enabled"];
+				if (enabled != null) {
+					this.config.mqtt.enabled = enabled;
+				}
+				const server = mqtt["server"];
+				if (server != null) {
+					this.config.mqtt.server = server;
+				}
+				const port = mqtt["port"];
+				if (port != null) {
+					this.config.mqtt.port = port;
+				}
+				const id = mqtt["id"];
+				if (id != null) {
+					this.config.mqtt.id = id;
+				}
+				const user = mqtt["user"];
+				if (user != null) {
+					this.config.mqtt.user = user;
+				}
+				const has_password = mqtt["has_password"];
+				if (has_password != null) {
+					this.config.mqtt.has_password = has_password;
+				}
+				const password = mqtt["password"];
+				if (password != null) {
+					this.config.mqtt.password = password;
+				}
+				const topic = mqtt["topic"];
+				if (topic != null) {
+					this.config.mqtt.topic = topic;
+				}
+
+				// Special status update
+				const status = mqtt["status"];
+				if (status != null) {
+					this.status.mqtt.status = status;
+				}
+			}
+
+			const pvo = json['pvo'];
+			if (pvo != null) {
+				const enabled = pvo["enabled"];
+				if (enabled != null) {
+					this.config.pvo.enabled = enabled;
+				}
+				const api_key = pvo["api_key"];
+				if (api_key != null) {
+					this.config.pvo.api_key = api_key;
+				}
+				const system_id = pvo["system_id"];
+				if (system_id != null) {
+					this.config.pvo.system_id = system_id;
+				}
+				const time_offset = pvo["time_offset"];
+				if (time_offset != null) {
+					this.config.pvo.time_offset = time_offset;
+				}
+
+				// Special status update
+				const status = pvo["status"];
+				if (status != null) {
+					this.status.pvo.status = status;
+				}
+			}
+		},
+		checkForNetworkData(json) {
+			const network = json['network'];
+			if (network != null) {
+				const wifi_client = network['wifi_client'];
+				if (wifi_client != null) {
+					const status = wifi_client['status'];
+					if (status != null) {
+						this.status.network.wifi_client.status = status;
+					}
+					const ip = wifi_client['ip'];
+					if (ip != null) {
+						this.status.network.wifi_client.ip = ip;
+					}
+					const netmask = wifi_client['netmask'];
+					if (netmask != null) {
+						this.status.network.wifi_client.netmask = netmask;
+					}
+					const dns = wifi_client['dns'];
+					if (dns != null) {
+						this.status.network.wifi_client.dns = dns;
+					}
+				}
+
+				const wifi_ap = network['wifi_ap'];
+				if (wifi_ap != null) {
+					const status = wifi_ap['status'];
+					if (status != null) {
+						this.status.network.wifi_ap.status = status;
+					}
+					const ip = wifi_ap['ip'];
+					if (ip != null) {
+						this.status.network.wifi_ap.ip = ip;
+					}
+				}
+
+				const mac = network['mac'];
+				if (mac != null) {
+					this.status.network.mac = mac;
+				}
+			}
+		},
+		checkForSystemData(json) {
+			const system = json['s'];
+			if (system != null) {
+				const systemState = system['state'];
+				if (systemState != null) {
+					this.status.s.state = systemState;
+				}
+				const systemError = system['error'];
+				if (systemError != null) {
+					this.status.s.error = systemError;
+				}
+				const systemTemperature = system['temperature'];
+				if (systemTemperature != null) {
+					this.status.s.temperature = systemTemperature;
+				}
+			}
+		},
+		checkForPanelData(json) {
+			const panel = json['p'];
+			if (panel != null) {
+				const panelVoltage = panel['voltage'];
+				if (panelVoltage != null) {
+					this.status.p.voltage = panelVoltage;
+				}
+				const panelCurrent = panel['current'];
+				if (panelCurrent != null) {
+					this.status.p.current = panelCurrent;
+				}
+			}
+		},
+		checkForLoadData(json) {
+			const load = json['l'];
+			if (load != null) {
+				const loadEnabled = load['enabled'];
+				if (loadEnabled != null) {
+					this.status.l.enabled = loadEnabled;
+				}
+				const loadVoltage = load['voltage'];
+				if (loadVoltage != null) {
+					this.status.l.voltage = loadVoltage;
+				}
+				const loadCurrent = load['current'];
+				if (loadCurrent != null) {
+					this.status.l.current = loadCurrent;
+				}
+			}
+		},
+		checkForBatteryData(json) {
+			const battery = json['b'];
+			if (battery != null) {
+				const batteryCharge = battery['charge'];
+				if (batteryCharge != null) {
+					this.status.b.charge = batteryCharge;
+				}
+				const batteryVoltage = battery['voltage'];
+				if (batteryVoltage != null) {
+					this.status.b.voltage = batteryVoltage;
+				}
+				const batteryCurrent = battery['current'];
+				if (batteryCurrent != null) {
+					this.status.b.current = batteryCurrent;
+				}
+				const batteryTemperature = battery['temperature'];
+				if (batteryTemperature != null) {
+					this.status.b.temperature = batteryTemperature;
+				}
+			}
+		},
+
+		request_config() {
+			axios.get("/api/config").then(response => {
+				this.$set(this, "config", response.data);
+			}).catch(error => {
+				console.error(error)
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = "Could not request config";
+				this.m_dialog.show = true;
+			});
+		},
+
+		/**
+		 * Control the renogy charge controller
+		 * @param {boolean} enabled Enabled (true) or disable (false) the load output
+		 */
+		api_post_control(enabled) {
+			axios.post("/api/control", {
+				enabled: enabled
+			}).then(response => {
+				if (response.data === "OK") {
+					console.info("Updated control");
+				}
+			}).catch(error => {
+				console.error(error);
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = "Could not control RNGBridge";
+				this.m_dialog.show = true;
+			});
+		},
+
+		api_save_wifi() {
+			this.api_save({ wifi: this.config.wifi });
+		},
+		api_save_mqtt() {
+			this.api_save({ mqtt: this.config.mqtt });
+		},
+		api_save_pvo() {
+			this.api_save({ pvo: this.config.pvo });
+		},
+		api_save(config) {
+			axios.post("/api/config", config).then(response => {
+				if (response.data === "OK") {
+					alert("Config updated the ESP will reboot");
+				} else {
+					alert("Error while updating the config: " + response.data);
+					console.error(response.data)
+				}
+				this.request_config();
+			}).catch(error => {
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = "Could not update config";
+				this.m_dialog.show = true;
+				console.error(error)
+			});
+		},
+		api_submit_ota() {
+			if (this.status.ota.file == null) {
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = "No software binary selected to upload. Please select a file first.";
+				this.m_dialog.show = true;
+				return;
+			}
+			if (this.status.ota.progress > 0) {
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = "Software update already in progress!";
+				this.m_dialog.show = true;
+				return;
+			}
+			var formData = new FormData();
+			formData.append("data", this.status.ota.file);
+			axios.post("ota", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			}).then(() => {
+				this.status.ota.progress = 0;
+				this.m_dialog.headline = "Update successfull";
+				this.m_dialog.message = "The software update was successfull. The page will reload now!";
+				this.m_dialog.show = true;
+				setTimeout(() => {
+					window.location.reload();
+				}, 3000);
+			}).catch(reason => {
+				console.debug(reason);
+				this.status.ota.progress = 0;
+				this.m_dialog.headline = "Error";
+				this.m_dialog.message = `The software update failed. ${reason}`;
+				this.m_dialog.show = true;
+			});
+		},
+	}
+}
+
+
