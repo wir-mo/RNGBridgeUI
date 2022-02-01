@@ -129,12 +129,12 @@ export const api_mixin = {
 				console.debug(`Event[status]: ${event.data}`);
 				let json = JSON.parse(event.data);
 
-				const uptime = json['uptime'];
+				const uptime = json['up'];
 				if (uptime != null) {
 					this.status.uptime = uptime;
 				}
 
-				const heap = json['heap'];
+				const heap = json['he'];
 				if (heap != null) {
 					this.status.heap = heap;
 				}
