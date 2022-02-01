@@ -242,12 +242,11 @@ export const api_mixin = {
 				if (topic != null) {
 					this.config.mqtt.topic = topic;
 				}
-
-				// Special status update
-				const status = mqtt["status"];
-				if (status != null) {
-					this.status.mqtt.status = status;
-				}
+			}
+			// Special status update
+			const mqtt_status = json["mqttstat"];
+			if (mqtt_status != null) {
+				this.status.mqtt.status = mqtt_status;
 			}
 
 			const pvo = json['pvo'];
@@ -268,12 +267,11 @@ export const api_mixin = {
 				if (time_offset != null) {
 					this.config.pvo.time_offset = time_offset;
 				}
-
-				// Special status update
-				const status = pvo["status"];
-				if (status != null) {
-					this.status.pvo.status = status;
-				}
+			}
+			// Special status update
+			const pvo_status = json["pvostat"];
+			if (pvo_status != null) {
+				this.status.pvo.status = pvo_status;
 			}
 		},
 		checkForNetworkData(json) {
@@ -320,15 +318,15 @@ export const api_mixin = {
 		checkForSystemData(json) {
 			const system = json['s'];
 			if (system != null) {
-				const systemState = system['state'];
+				const systemState = system['st'];
 				if (systemState != null) {
 					this.status.s.state = systemState;
 				}
-				const systemError = system['error'];
+				const systemError = system['er'];
 				if (systemError != null) {
 					this.status.s.error = systemError;
 				}
-				const systemTemperature = system['temperature'];
+				const systemTemperature = system['te'];
 				if (systemTemperature != null) {
 					this.status.s.temperature = systemTemperature;
 				}
@@ -337,11 +335,11 @@ export const api_mixin = {
 		checkForPanelData(json) {
 			const panel = json['p'];
 			if (panel != null) {
-				const panelVoltage = panel['voltage'];
+				const panelVoltage = panel['vo'];
 				if (panelVoltage != null) {
 					this.status.p.voltage = panelVoltage;
 				}
-				const panelCurrent = panel['current'];
+				const panelCurrent = panel['cu'];
 				if (panelCurrent != null) {
 					this.status.p.current = panelCurrent;
 				}
@@ -350,15 +348,15 @@ export const api_mixin = {
 		checkForLoadData(json) {
 			const load = json['l'];
 			if (load != null) {
-				const loadEnabled = load['enabled'];
+				const loadEnabled = load['en'];
 				if (loadEnabled != null) {
 					this.status.l.enabled = loadEnabled;
 				}
-				const loadVoltage = load['voltage'];
+				const loadVoltage = load['vo'];
 				if (loadVoltage != null) {
 					this.status.l.voltage = loadVoltage;
 				}
-				const loadCurrent = load['current'];
+				const loadCurrent = load['cu'];
 				if (loadCurrent != null) {
 					this.status.l.current = loadCurrent;
 				}
@@ -367,19 +365,19 @@ export const api_mixin = {
 		checkForBatteryData(json) {
 			const battery = json['b'];
 			if (battery != null) {
-				const batteryCharge = battery['charge'];
+				const batteryCharge = battery['ch'];
 				if (batteryCharge != null) {
 					this.status.b.charge = batteryCharge;
 				}
-				const batteryVoltage = battery['voltage'];
+				const batteryVoltage = battery['vo'];
 				if (batteryVoltage != null) {
 					this.status.b.voltage = batteryVoltage;
 				}
-				const batteryCurrent = battery['current'];
+				const batteryCurrent = battery['cu'];
 				if (batteryCurrent != null) {
 					this.status.b.current = batteryCurrent;
 				}
-				const batteryTemperature = battery['temperature'];
+				const batteryTemperature = battery['te'];
 				if (batteryTemperature != null) {
 					this.status.b.temperature = batteryTemperature;
 				}
@@ -391,7 +389,7 @@ export const api_mixin = {
 				this.$set(this, "config", response.data);
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `Could not request config: ${error}`;
+				this.m_dialog.message = `Could not request config:\n${error}`;
 				this.m_dialog.show = true;
 			});
 		},
@@ -409,7 +407,7 @@ export const api_mixin = {
 				}
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `Could not control RNGBridge: ${error}`;
+				this.m_dialog.message = `Could not control RNGBridge:\n${error}`;
 				this.m_dialog.show = true;
 			});
 		},
@@ -421,6 +419,13 @@ export const api_mixin = {
 			this.api_save({ mqtt: this.config.mqtt });
 		},
 		api_save_pvo() {
+			// TODO is this really needed?
+			if (typeof this.config.pvo.time_offset !== 'number') {
+				this.config.pvo.time_offset = parseInt(this.config.pvo.time_offset);
+			}
+			if (typeof this.config.pvo.system_id !== 'number') {
+				this.config.pvo.system_id = parseInt(this.config.pvo.system_id);
+			}
 			this.api_save({ pvo: this.config.pvo });
 		},
 		api_save(config) {
@@ -434,13 +439,13 @@ export const api_mixin = {
 					}, 3000);
 				} else {
 					this.m_dialog.headline = "Error";
-					this.m_dialog.message = `Could not update config: ${response.data}`;
+					this.m_dialog.message = `Could not update config:\n${response.data}`;
 					this.m_dialog.show = true;
 				}
 				this.request_config();
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `Could not update config: ${error}`;
+				this.m_dialog.message = `Could not update config:\n${error}`;
 				this.m_dialog.show = true;
 			});
 		},
@@ -474,7 +479,7 @@ export const api_mixin = {
 			}).catch(error => {
 				this.status.ota.progress = 0;
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `The software update failed. ${error}`;
+				this.m_dialog.message = `The software update failed.\n${error}`;
 				this.m_dialog.show = true;
 			});
 		},

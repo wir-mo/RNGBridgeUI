@@ -98,7 +98,7 @@ export function makeServer() {
 				const loadEnabled = json["enabled"];
 				status_data.l.enabled = loadEnabled;
 				return "OK";
-			})
+			});
 
 			this.post("/api/config", (schema, request) => {
 				let json = JSON.parse(request.requestBody)
@@ -115,11 +115,11 @@ export function makeServer() {
 					config_data["pvo"] = pvoConfig;
 				}
 				return "OK";
-			})
+			});
 
 			this.get("/api/config", () => {
 				return config_data;
-			})
+			});
 
 			// this.get("/api/status", () => {
 			// 	status_data.uptime = (Date.now() - startTime) / 1000

@@ -426,6 +426,7 @@
                     ></v-text-field>
                     <v-text-field
                       label="Time offset from UTC"
+                      type="number"
                       v-model="config.pvo.time_offset"
                     ></v-text-field>
                   </template>
