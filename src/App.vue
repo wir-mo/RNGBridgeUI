@@ -85,13 +85,13 @@
                     <v-list-item>
                       <v-list-item-content>Voltage:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.voltage }} V
+                        {{ status.b.voltage.toFixed(2) }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Current:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.current }} A
+                        {{ status.b.current.toFixed(2) }} A
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
@@ -120,19 +120,19 @@
                     <v-list-item>
                       <v-list-item-content>Voltage:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.l.voltage }} V
+                        {{ status.l.voltage.toFixed(2) }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Current:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.l.current }} A
+                        {{ status.l.current.toFixed(2) }} A
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Power:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ Math.floor(status.l.voltage * status.l.current) }} W
+                        {{ (status.l.voltage * status.l.current).toFixed(2) }} W
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
@@ -160,19 +160,19 @@
                     <v-list-item>
                       <v-list-item-content>Voltage:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.p.voltage }} V
+                        {{ status.p.voltage.toFixed(2) }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Current:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.p.current }} A
+                        {{ status.p.current.toFixed(2) }} A
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Power:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ Math.floor(status.p.voltage * status.p.current) }} W
+                        {{ (status.p.voltage * status.p.current).toFixed(2) }} W
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -202,8 +202,6 @@
                     <v-list-item>
                       <v-list-item-content>Error:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        <!-- {{ system_error }} -->
-                        <!-- {{ system_errors }} -->
                         <v-chip-group column>
                           <v-tooltip
                             v-for="item in system_errors"
