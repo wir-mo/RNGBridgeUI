@@ -63,10 +63,12 @@ export const api_mixin = {
 						status: "disabled", //Can be either disabled or enabled
 						ip: "111.222.333.444",
 					},
-					mac: "00:DE:AD:BE:EF:00",
 				},
 			},
 			config: {
+				dev: {
+					name: 'RNGBridge',
+				},
 				wifi: {
 					client_enabled: false,
 					client_dhcp_enabled: true,
@@ -273,6 +275,14 @@ export const api_mixin = {
 			if (pvo_status != null) {
 				this.status.pvo.status = pvo_status;
 			}
+
+			const dev = json["dev"];
+			if (dev != null) {
+				const name = dev["name"];
+				if (name != null) {
+					this.config.dev.name = name;
+				}
+			}
 		},
 		checkForNetworkData(json) {
 			const network = json['network'];
@@ -307,11 +317,6 @@ export const api_mixin = {
 					if (ip != null) {
 						this.status.network.wifi_ap.ip = ip;
 					}
-				}
-
-				const mac = network['mac'];
-				if (mac != null) {
-					this.status.network.mac = mac;
 				}
 			}
 		},
@@ -412,6 +417,9 @@ export const api_mixin = {
 			});
 		},
 
+		api_save_device() {
+			this.api_save({ device: this.config.dev });
+		},
 		api_save_wifi() {
 			this.api_save({ wifi: this.config.wifi });
 		},

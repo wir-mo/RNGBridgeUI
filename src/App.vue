@@ -15,7 +15,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-toolbar-title>RNGBridge</v-toolbar-title>
+      <v-toolbar-title>{{ config.dev.name }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -254,6 +254,21 @@
           <template v-else>
             <v-expansion-panels>
               <v-expansion-panel>
+                <v-expansion-panel-header>
+                  <v-row no-gutters>
+                    <v-col cols="4">Device</v-col>
+                  </v-row>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-text-field
+                    label="Device name"
+                    v-model="config.dev.name"
+                  ></v-text-field>
+                  <v-btn @click="api_save_device">Save Device config</v-btn>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+
+              <v-expansion-panel>
                 <v-expansion-panel-header v-slot="{ open }">
                   <v-row no-gutters>
                     <v-col cols="4">WiFi</v-col>
@@ -439,7 +454,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6"> Software Version: 1.0.0 </v-col>
+                          <v-col cols="6"> Software Version: 1.1.0 </v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
