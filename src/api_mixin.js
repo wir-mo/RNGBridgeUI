@@ -418,7 +418,7 @@ export const api_mixin = {
 		},
 
 		api_save_device() {
-			this.api_save({ device: this.config.dev });
+			this.api_save({ dev: this.config.dev });
 		},
 		api_save_wifi() {
 			this.api_save({ wifi: this.config.wifi });
