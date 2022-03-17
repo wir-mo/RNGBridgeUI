@@ -480,25 +480,31 @@ export const api_mixin = {
 
 		api_save_device() {
 			let devConfig = { dev: this.config.dev };
+			devConfig.dev.load = devConfig.dev.outputControls.load;
 			devConfig.dev.load.min = devConfig.dev.load.range[0];
 			devConfig.dev.load.max = devConfig.dev.load.range[1];
 			delete devConfig.dev.load.range;
 			delete devConfig.dev.load.label;
 
+			devConfig.dev.out1 = devConfig.dev.outputControls.out1;
 			devConfig.dev.out1.min = devConfig.dev.out1.range[0];
 			devConfig.dev.out1.max = devConfig.dev.out1.range[1];
 			delete devConfig.dev.out1.range;
 			delete devConfig.dev.out1.label;
 
+			devConfig.dev.out2 = devConfig.dev.outputControls.out2;
 			devConfig.dev.out2.min = devConfig.dev.out2.range[0];
 			devConfig.dev.out2.max = devConfig.dev.out2.range[1];
 			delete devConfig.dev.out2.range;
 			delete devConfig.dev.out2.label;
 
+			devConfig.dev.out3 = devConfig.dev.outputControls.out3;
 			devConfig.dev.out3.min = devConfig.dev.out3.range[0];
 			devConfig.dev.out3.max = devConfig.dev.out3.range[1];
 			delete devConfig.dev.out3.range;
 			delete devConfig.dev.out3.label;
+
+			delete devConfig.dev.outputControls;
 
 			this.api_save(devConfig);
 		},
