@@ -479,7 +479,7 @@ export const api_mixin = {
 		},
 
 		api_save_device() {
-			let devConfig = { dev: this.config.dev };
+			let devConfig = { dev: JSON.parse(JSON.stringify(this.config.dev)) };
 			devConfig.dev.load = devConfig.dev.outputControls.load;
 			devConfig.dev.load.min = devConfig.dev.load.range[0];
 			devConfig.dev.load.max = devConfig.dev.load.range[1];
@@ -538,7 +538,6 @@ export const api_mixin = {
 					this.m_dialog.message = `Could not update config:\n${response.data}`;
 					this.m_dialog.show = true;
 				}
-				this.request_config();
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
 				this.m_dialog.message = `Could not update config:\n${error}`;
