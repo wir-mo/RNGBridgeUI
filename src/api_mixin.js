@@ -68,6 +68,32 @@ export const api_mixin = {
 			config: {
 				dev: {
 					name: 'RNGBridge',
+					outputControls: {
+						load: {
+							label: "Load Control",
+							inputType: "bsoc",
+							inverted: false,
+							range: [10, 50],
+						},
+						out1: {
+							label: "Output 1",
+							inputType: "bsoc",
+							inverted: false,
+							range: [10, 50],
+						},
+						out2: {
+							label: "Output 2",
+							inputType: "bvoltage",
+							inverted: false,
+							range: [10, 50],
+						},
+						out3: {
+							label: "Output 3",
+							inputType: "bsoc",
+							inverted: false,
+							range: [10, 50],
+						},
+					},
 				},
 				wifi: {
 					client_enabled: false,
@@ -282,6 +308,41 @@ export const api_mixin = {
 				if (name != null) {
 					this.config.dev.name = name;
 				}
+
+				const load = dev["load"];
+				if (load != null) {
+					this.updateOutputControl(this.config.dev.outputControls.load, load);
+				}
+				const out1 = dev["out1"];
+				if (out1 != null) {
+					this.updateOutputControl(this.config.dev.outputControls.out1, out1);
+				}
+				const out2 = dev["out2"];
+				if (out2 != null) {
+					this.updateOutputControl(this.config.dev.outputControls.out2, out2);
+				}
+				const out3 = dev["out3"];
+				if (out3 != null) {
+					this.updateOutputControl(this.config.dev.outputControls.out3, out3);
+				}
+			}
+		},
+		updateOutputControl(control, json) {
+			const inputType = json["inputType"];
+			if (inputType != null) {
+				control.inputType = inputType;
+			}
+			const inverted = json["inverted"];
+			if (inverted != null) {
+				control.inverted = inverted;
+			}
+			const min = json["min"];
+			if (min != null) {
+				control.range[0] = min;
+			}
+			const max = json["max"];
+			if (max != null) {
+				control.range[1] = max;
 			}
 		},
 		checkForNetworkData(json) {
@@ -391,7 +452,7 @@ export const api_mixin = {
 
 		request_config() {
 			axios.get("/api/config").then(response => {
-				this.$set(this, "config", response.data);
+				this.checkForConfig(response.data);
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
 				this.m_dialog.message = `Could not request config:\n${error}`;
@@ -418,7 +479,28 @@ export const api_mixin = {
 		},
 
 		api_save_device() {
-			this.api_save({ dev: this.config.dev });
+			let devConfig = { dev: this.config.dev };
+			devConfig.dev.load.min = devConfig.dev.load.range[0];
+			devConfig.dev.load.max = devConfig.dev.load.range[1];
+			delete devConfig.dev.load.range;
+			delete devConfig.dev.load.label;
+
+			devConfig.dev.out1.min = devConfig.dev.out1.range[0];
+			devConfig.dev.out1.max = devConfig.dev.out1.range[1];
+			delete devConfig.dev.out1.range;
+			delete devConfig.dev.out1.label;
+
+			devConfig.dev.out2.min = devConfig.dev.out2.range[0];
+			devConfig.dev.out2.max = devConfig.dev.out2.range[1];
+			delete devConfig.dev.out2.range;
+			delete devConfig.dev.out2.label;
+
+			devConfig.dev.out3.min = devConfig.dev.out3.range[0];
+			devConfig.dev.out3.max = devConfig.dev.out3.range[1];
+			delete devConfig.dev.out3.range;
+			delete devConfig.dev.out3.label;
+
+			this.api_save(devConfig);
 		},
 		api_save_wifi() {
 			this.api_save({ wifi: this.config.wifi });

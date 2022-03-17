@@ -6,7 +6,7 @@
           class="ma-2"
           icon
           color="secondary"
-          href="https://github.com/enwi/RNGToWiFi"
+          href="https://github.com/enwi/RNGBridgeDoc"
           target="_blank"
         >
           <v-icon color="white" large>{{ mdiGithub }}</v-icon>
@@ -264,6 +264,103 @@
                     label="Device name"
                     v-model="config.dev.name"
                   ></v-text-field>
+
+                  <v-expansion-panels multiple flat>
+                    <v-expansion-panel
+                      v-for="control in config.dev.outputControls"
+                      :key="control.label"
+                      :set="
+                        ((enabled = control.inputType != 'disabled'),
+                        (inputType = inputTypes[control.inputType]))
+                      "
+                    >
+                      <v-expansion-panel-header class="pa-0">
+                        <v-row no-gutters>
+                          <v-col cols="4">{{ control.label }}</v-col>
+                          <v-col cols="8" class="text--secondary">
+                            <v-row no-gutters style="width: 100%">
+                              <v-col cols="6">
+                                {{
+                                  enabled
+                                    ? (control.inverted
+                                        ? "On below "
+                                        : "Off below ") +
+                                      `${control.range[0]}${inputType.unit}`
+                                    : "Disabled"
+                                }}
+                              </v-col>
+                              <v-col cols="6" v-if="enabled">
+                                {{
+                                  (control.inverted
+                                    ? "Off above "
+                                    : "On above ") +
+                                  `${control.range[1]}${inputType.unit}`
+                                }}
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                      </v-expansion-panel-header>
+                      <v-expansion-panel-content flat>
+                        <v-select
+                          v-model="control.inputType"
+                          :items="inputOptions"
+                        ></v-select>
+                        <v-checkbox v-model="control.inverted">
+                          <template v-slot:label>
+                            {{ control.inverted ? "Inverted" : "Not inverted" }}
+                          </template>
+                        </v-checkbox>
+                        <v-range-slider
+                          track-color="primary"
+                          track-fill-color="primary"
+                          :disabled="!enabled"
+                          v-model="control.range"
+                          :step="inputType.step"
+                          :min="inputType.min"
+                          :max="inputType.max"
+                        >
+                          <template v-slot:thumb-label="props">
+                            <v-icon dark>
+                              {{
+                                props.value == control.range[0]
+                                  ? control.inverted
+                                    ? mdiPowerPlug
+                                    : mdiPowerPlugOff
+                                  : control.inverted
+                                  ? mdiPowerPlugOff
+                                  : mdiPowerPlug
+                              }}
+                            </v-icon>
+                          </template>
+                          <template v-slot:prepend>
+                            <v-text-field
+                              v-model="control.range[0]"
+                              :step="inputType.step"
+                              class="mt-0 pt-0"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 48px"
+                            ></v-text-field>
+                          </template>
+                          <template v-slot:append>
+                            <v-text-field
+                              v-model="control.range[1]"
+                              :step="inputType.step"
+                              class="mt-0 pt-0"
+                              hide-details
+                              single-line
+                              type="number"
+                              style="width: 48px"
+                            ></v-text-field>
+                          </template>
+                        </v-range-slider>
+                      </v-expansion-panel-content>
+                      <v-divider class="m-0"></v-divider>
+                    </v-expansion-panel>
+                  </v-expansion-panels>
+
                   <v-btn @click="api_save_device">Save Device config</v-btn>
                 </v-expansion-panel-content>
               </v-expansion-panel>
@@ -454,7 +551,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6"> Software Version: 1.1.1 </v-col>
+                          <v-col cols="6">Software Version: 1.2.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -570,6 +667,25 @@ export default {
         0x20000: "Battery over-voltage", // E2
         0x10000: "Battery over-discharge", // E1
       },
+      inputTypes: {
+        disabled: { unit: "", min: 0, max: 100, step: 1 },
+        bsoc: { unit: "%", min: 0, max: 100, step: 1 },
+        bvoltage: { unit: "V", min: 0, max: 48, step: 0.1 },
+      },
+      inputOptions: [
+        {
+          text: "Disabled",
+          value: "disabled",
+        },
+        {
+          text: "Battery SOC",
+          value: "bsoc",
+        },
+        {
+          text: "Battery Voltage",
+          value: "bvoltage",
+        },
+      ],
     };
   },
   computed: {
