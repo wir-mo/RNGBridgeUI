@@ -1,6 +1,6 @@
 {
   "name": "rngbridge-webui",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,12 +14,12 @@
     "vuetify": "^2.6.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.7",
+    "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.12.16",
-    "@mdi/js": "^6.5.95",
-    "@vue/cli-plugin-babel": "^5.0.3",
-    "@vue/cli-plugin-eslint": "^5.0.3",
-    "@vue/cli-service": "^5.0.3",
+    "@mdi/js": "^6.6.95",
+    "@vue/cli-plugin-babel": "^5.0.4",
+    "@vue/cli-plugin-eslint": "^5.0.4",
+    "@vue/cli-service": "^5.0.4",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "html-webpack-inline-source-plugin": "1.0.0-beta.2",
