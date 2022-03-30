@@ -517,6 +517,9 @@ export const api_mixin = {
 			this.api_save({ wifi: this.config.wifi });
 		},
 		api_save_mqtt() {
+			if (typeof this.config.mqtt.interval !== 'number') {
+				this.config.mqtt.interval = parseInt(this.config.mqtt.interval);
+			}
 			this.api_save({ mqtt: this.config.mqtt });
 		},
 		api_save_pvo() {
