@@ -498,6 +498,14 @@
                       label="Topic"
                       v-model="config.mqtt.topic"
                     ></v-text-field>
+                    <v-text-field
+                      v-model="config.mqtt.interval"
+                      label="Update interval (seconds)"
+                      min="1"
+                      max="240"
+                      step="1"
+                      type="number"
+                    ></v-text-field>
                   </template>
                   <v-btn @click="api_save_mqtt">Save MQTT config</v-btn>
                 </v-expansion-panel-content>
@@ -551,7 +559,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.2.1</v-col>
+                          <v-col cols="6">Software Version: 2.3.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>

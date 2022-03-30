@@ -119,6 +119,7 @@ export const api_mixin = {
 					has_password: false,
 					password: null,
 					topic: "/rng",
+					interval: 1,
 				},
 				pvo: {
 					enabled: false,
@@ -269,6 +270,10 @@ export const api_mixin = {
 				const topic = mqtt["topic"];
 				if (topic != null) {
 					this.config.mqtt.topic = topic;
+				}
+				const interval = mqtt["interval"];
+				if (interval != null) {
+					this.config.mqtt.interval = interval;
 				}
 			}
 			// Special status update
