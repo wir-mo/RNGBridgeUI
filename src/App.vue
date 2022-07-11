@@ -558,7 +558,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.4.0</v-col>
+                          <v-col cols="6">Software Version: 2.4.1</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
