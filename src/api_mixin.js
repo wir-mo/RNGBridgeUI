@@ -466,19 +466,18 @@ export const api_mixin = {
 		},
 
 		/**
-		 * Control the renogy charge controller
-		 * @param {boolean} enabled Enabled (true) or disable (false) the load output
+		 * Control the renogy charge controller load output and other outputs (Out1, Out2 and Out3)
+		 * @param {json} json JSON object containing key value pairs where the key is one of 
+		 * load, out1, out2 or out3 and the value a boolean (true turn on, false turn off)
 		 */
-		api_post_control(enabled) {
-			axios.post("/api/control", {
-				enabled: enabled
-			}).then(response => {
+		api_post_control(json) {
+			axios.post("/api/control", json).then(response => {
 				if (response.data === "OK") {
-					console.info("Updated control");
+					console.info("/api/control success");
 				}
 			}).catch(error => {
 				this.m_dialog.headline = "Error";
-				this.m_dialog.message = `Could not control RNGBridge:\n${error}`;
+				this.m_dialog.message = `There was an error while trying to control load, out1, out2 or out3:\n${error}`;
 				this.m_dialog.show = true;
 			});
 		},

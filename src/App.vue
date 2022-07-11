@@ -558,7 +558,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.4.1</v-col>
+                          <v-col cols="6">Software Version: 2.4.2</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -817,7 +817,7 @@ export default {
   },
   methods: {
     toggle_load() {
-      this.api_post_control(!this.status.l.enabled);
+      this.api_post_control({load:!this.status.l.enabled});
     },
     set_wifi_mode(value) {
       value = typeof value == "string" ? value : value.value;
