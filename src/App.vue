@@ -42,6 +42,27 @@
           {{ info_panel.message }}
         </v-banner>
 
+        <v-banner single-line v-if="status.ota.status">
+          <v-icon color="primary" size="36">
+            {{ mdiDownload }}
+          </v-icon>
+          Update available (V{{ status.ota.status }})
+          <template v-slot:actions>
+            <v-btn
+              color="primary"
+              text
+              :href="
+                'https://github.com/enwi/RNGBridgeDoc/releases/download/' +
+                status.ota.status +
+                '/RNGBridge.ino.bin'
+              "
+              target="_blank"
+            >
+              Download
+            </v-btn>
+          </template>
+        </v-banner>
+
         <v-dialog
           transition="dialog-bottom-transition"
           v-model="m_dialog.show"
@@ -107,7 +128,7 @@
                 <v-card>
                   <v-app-bar flat color="rgba(0, 0, 0, 0)">
                     <!-- <v-btn icon :color="status.l.enabled ? 'green' : 'red'"> -->
-                    <v-btn icon @click="toggle_load">
+                    <v-btn icon @click="toggle_out('l')">
                       <v-icon size="24">
                         {{ status.l.enabled ? mdiPowerPlug : mdiPowerPlugOff }}
                       </v-icon>
@@ -141,7 +162,7 @@
                         <v-switch
                           color="accent"
                           :input-value="status.l.enabled"
-                          @click="toggle_load"
+                          @click="toggle_out('l')"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -221,6 +242,48 @@
                           </v-tooltip>
                         </v-chip-group>
                       </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-card>
+                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
+                    <v-icon size="24"> {{ mdiElectricSwitch }} </v-icon>
+                    <v-toolbar-title class="text-h6 pl-3">
+                      Output
+                    </v-toolbar-title>
+                  </v-app-bar>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content>Out1:</v-list-item-content>
+                      <v-list-item-action>
+                        <v-switch
+                          color="accent"
+                          :input-value="status.o['1']"
+                          @click="toggle_out('1')"
+                        ></v-switch>
+                      </v-list-item-action>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>Out2:</v-list-item-content>
+                      <v-list-item-action>
+                        <v-switch
+                          color="accent"
+                          :input-value="status.o['2']"
+                          @click="toggle_out('2')"
+                        ></v-switch>
+                      </v-list-item-action>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>Out3:</v-list-item-content>
+                      <v-list-item-action>
+                        <v-switch
+                          color="accent"
+                          :input-value="status.o['3']"
+                          @click="toggle_out('3')"
+                        ></v-switch>
+                      </v-list-item-action>
                     </v-list-item>
                   </v-list>
                 </v-card>
@@ -558,7 +621,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.4.2</v-col>
+                          <v-col cols="6">Software Version: 2.5.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -618,6 +681,8 @@ import {
   mdiPowerPlugOff,
   mdiServer,
   mdiInformation,
+  mdiElectricSwitch,
+  mdiDownload,
 } from "@mdi/js";
 
 export default {
@@ -644,6 +709,10 @@ export default {
       mdiServer: mdiServer,
 
       mdiInformation: mdiInformation,
+
+      mdiElectricSwitch: mdiElectricSwitch,
+
+      mdiDownload: mdiDownload,
 
       displaySettings: false,
       wifiOptions: [
@@ -816,8 +885,24 @@ export default {
     },
   },
   methods: {
-    toggle_load() {
-      this.api_post_control({load:!this.status.l.enabled});
+    toggle_out(output) {
+      switch (output) {
+        case "l":
+          this.api_post_control({ load: !this.status.l.enabled });
+          break;
+        case "1":
+          this.api_post_control({ out1: !this.status.o[output] });
+          break;
+        case "2":
+          this.api_post_control({ out2: !this.status.o[output] });
+          break;
+        case "3":
+          this.api_post_control({ out3: !this.status.o[output] });
+          break;
+
+        default:
+          break;
+      }
     },
     set_wifi_mode(value) {
       value = typeof value == "string" ? value : value.value;
