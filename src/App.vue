@@ -404,7 +404,7 @@
                               hide-details
                               single-line
                               type="number"
-                              style="width: 48px"
+                              style="width: 55px"
                             ></v-text-field>
                           </template>
                           <template v-slot:append>
@@ -415,7 +415,7 @@
                               hide-details
                               single-line
                               type="number"
-                              style="width: 48px"
+                              style="width: 55px"
                             ></v-text-field>
                           </template>
                         </v-range-slider>
@@ -621,7 +621,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.5.0</v-col>
+                          <v-col cols="6">Software Version: 2.6.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -744,9 +744,11 @@ export default {
         0x10000: "Battery over-discharge", // E1
       },
       inputTypes: {
-        disabled: { unit: "", min: 0, max: 100, step: 1 },
+        disabled: { unit: "", min: 0, max: 160, step: 0.1 },
         bsoc: { unit: "%", min: 0, max: 100, step: 1 },
         bvoltage: { unit: "V", min: 0, max: 48, step: 0.1 },
+        pvoltage: { unit: "V", min: 0, max: 160, step: 0.1 },
+        pcurrent: { unit: "A", min: 0, max: 120, step: 0.1 },
       },
       inputOptions: [
         {
@@ -760,6 +762,14 @@ export default {
         {
           text: "Battery Voltage",
           value: "bvoltage",
+        },
+        {
+          text: "Panel Voltage",
+          value: "pvoltage",
+        },
+        {
+          text: "Panel Current",
+          value: "pcurrent",
         },
       ],
     };
