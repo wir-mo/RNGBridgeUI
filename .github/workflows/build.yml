@@ -48,6 +48,7 @@ jobs:
 
 
       - name: Push to git
+        if: github.event_name != 'pull_request'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automated binaries publications
