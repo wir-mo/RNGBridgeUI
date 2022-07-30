@@ -127,10 +127,10 @@
               <v-flex xs12 sm6 md4>
                 <v-card>
                   <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <!-- <v-btn icon :color="status.l.enabled ? 'green' : 'red'"> -->
+                    <!-- <v-btn icon :color="status.o.l ? 'green' : 'red'"> -->
                     <v-btn icon @click="toggle_out('l')">
                       <v-icon size="24">
-                        {{ status.l.enabled ? mdiPowerPlug : mdiPowerPlugOff }}
+                        {{ status.o.l ? mdiPowerPlug : mdiPowerPlugOff }}
                       </v-icon>
                     </v-btn>
                     <v-toolbar-title class="text-h6 pl-0">
@@ -161,7 +161,7 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.l.enabled"
+                          :input-value="status.o.l"
                           @click="toggle_out('l')"
                         ></v-switch>
                       </v-list-item-action>
@@ -260,8 +260,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o['1']"
-                          @click="toggle_out('1')"
+                          :input-value="status.o.o1"
+                          @click="toggle_out('o1')"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -270,8 +270,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o['2']"
-                          @click="toggle_out('2')"
+                          :input-value="status.o.o2"
+                          @click="toggle_out('o2')"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -280,8 +280,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o['3']"
-                          @click="toggle_out('3')"
+                          :input-value="status.o.o3"
+                          @click="toggle_out('o3')"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -568,6 +568,16 @@
                       max="240"
                       v-model="config.mqtt.interval"
                     ></v-text-field>
+                    <v-switch
+                      v-model="config.mqtt.hadisco"
+                      label="Homeassistant Discovery"
+                    >
+                    </v-switch>
+                    <v-text-field
+                      v-if="config.mqtt.hadisco"
+                      label="Discovery Topic"
+                      v-model="config.mqtt.hadiscotopic"
+                    ></v-text-field>
                   </template>
                   <v-btn @click="api_save_mqtt">Save MQTT config</v-btn>
                 </v-expansion-panel-content>
@@ -621,7 +631,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.6.0</v-col>
+                          <v-col cols="6">Software Version: 2.7.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -874,7 +884,7 @@ export default {
       if ((this.status.s.error & 0x7fff0000) > 0) {
         let errors = [];
         let errorVal = 0x10000;
-        for (var i = 1; i <= 15; ++i) {
+        for (let i = 1; i <= 15; ++i) {
           if ((this.status.s.error & errorVal) > 0) {
             errors.push({
               error: `E${i}`,
@@ -898,15 +908,15 @@ export default {
     toggle_out(output) {
       switch (output) {
         case "l":
-          this.api_post_control({ load: !this.status.l.enabled });
+          this.api_post_control({ load: !this.status.o[output] });
           break;
-        case "1":
+        case "o1":
           this.api_post_control({ out1: !this.status.o[output] });
           break;
-        case "2":
+        case "o2":
           this.api_post_control({ out2: !this.status.o[output] });
           break;
-        case "3":
+        case "o3":
           this.api_post_control({ out3: !this.status.o[output] });
           break;
 

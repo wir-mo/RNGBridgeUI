@@ -38,7 +38,6 @@ export const api_mixin = {
                 l:
                 {
                     // Load status (On=true, Off=false)
-                    enabled: false,
                     voltage: 0.0,
                     current: 0.0
                 },
@@ -56,9 +55,10 @@ export const api_mixin = {
                 // output status
                 o:
                 {
-                    1: false,
-                    2: false,
-                    3: false
+                    l: false,
+                    o1: false,
+                    o2: false,
+                    o3: false
                 },
                 network: {
                     wifi_client: {
@@ -128,6 +128,8 @@ export const api_mixin = {
                     password: null,
                     topic: "/rng",
                     interval: 1,
+                    hadisco: false,
+                    hadiscotopic: "homeassistant",
                 },
                 pvo: {
                     enabled: false,
@@ -179,7 +181,7 @@ export const api_mixin = {
                 this.checkForBatteryData(json);
                 this.checkForLoadData(json);
                 this.checkForPanelData(json);
-                this.checkForSystemData(json);
+                this.checkForControllerData(json);
                 this.checkForNetworkData(json);
                 this.checkForOutputData(json);
                 this.checkForConfig(json);
@@ -284,9 +286,17 @@ export const api_mixin = {
                 if (interval != null) {
                     this.config.mqtt.interval = interval;
                 }
+                const hadisco = mqtt["hadisco"];
+                if (hadisco != null) {
+                    this.config.mqtt.hadisco = hadisco;
+                }
+                const hadiscotopic = mqtt["hadiscotopic"];
+                if (interval != null) {
+                    this.config.mqtt.hadiscotopic = hadiscotopic;
+                }
             }
             // Special status update
-            const mqtt_status = json["mqttstat"];
+            const mqtt_status = json["mqttsta"];
             if (mqtt_status != null) {
                 this.status.mqtt.status = mqtt_status;
             }
@@ -311,7 +321,7 @@ export const api_mixin = {
                 }
             }
             // Special status update
-            const pvo_status = json["pvostat"];
+            const pvo_status = json["pvosta"];
             if (pvo_status != null) {
                 this.status.pvo.status = pvo_status;
             }
@@ -342,7 +352,7 @@ export const api_mixin = {
             }
 
             // Special status update
-            const ota_status = json["otastat"];
+            const ota_status = json["otasta"];
             if (ota_status != null) {
                 this.status.ota.status = ota_status;
             }
@@ -407,8 +417,8 @@ export const api_mixin = {
                 this.status.o = output;
             }
         },
-        checkForSystemData(json) {
-            const system = json['s'];
+        checkForControllerData(json) {
+            const system = json['c'];
             if (system != null) {
                 const systemState = system['st'];
                 if (systemState != null) {
@@ -440,10 +450,6 @@ export const api_mixin = {
         checkForLoadData(json) {
             const load = json['l'];
             if (load != null) {
-                const loadEnabled = load['en'];
-                if (loadEnabled != null) {
-                    this.status.l.enabled = loadEnabled;
-                }
                 const loadVoltage = load['vo'];
                 if (loadVoltage != null) {
                     this.status.l.voltage = loadVoltage;
