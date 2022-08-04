@@ -52,6 +52,17 @@
               color="primary"
               text
               :href="
+                'https://github.com/enwi/RNGBridgeDoc/releases/tag/' +
+                status.ota.status
+              "
+              target="_blank"
+            >
+              Release info
+            </v-btn>
+            <v-btn
+              color="primary"
+              text
+              :href="
                 'https://github.com/enwi/RNGBridgeDoc/releases/download/' +
                 status.ota.status +
                 '/RNGBridge.ino.bin'
@@ -637,7 +648,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.7.1</v-col>
+                          <v-col cols="6">Software Version: 2.7.2</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
