@@ -61,6 +61,7 @@ export const api_mixin = {
                     o3: false
                 },
                 network: {
+                    rssi: 0,
                     wifi_client: {
                         status: "disabled", //Can be either disabled or connected or disconnected
                         ip: "111.222.333.444",
@@ -176,6 +177,11 @@ export const api_mixin = {
                 const heap = json['he'];
                 if (heap != null) {
                     this.status.heap = heap;
+                }
+
+                const rssi = json['rssi'];
+                if (rssi != null) {
+                    this.status.network.rssi = rssi;
                 }
 
                 this.checkForBatteryData(json);

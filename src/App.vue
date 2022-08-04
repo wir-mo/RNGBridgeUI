@@ -306,7 +306,13 @@
                     <v-list-item>
                       <v-list-item-content>Heap:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.heap }}
+                        {{ status.heap }} bytes
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>RSSI:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.network.rssi }} dBm
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
