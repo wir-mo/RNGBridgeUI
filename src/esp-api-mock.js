@@ -12,6 +12,7 @@ let status_data = {
 	pvo: {
 		status: 'disabled', //Can be either disabled or connected or disconnected
 	},
+	ota: "2.7.2",
 	// System status
 	loadEnabledTemp: false,
 	b:
@@ -40,6 +41,7 @@ let status_data = {
 		temperature: 25.5
 	},
 	network: {
+		rssi: -75,
 		wifi_client: {
 			status: 'disabled', //Can be either disabled or connected or disconnected
 			ip: '111.222.333.444',

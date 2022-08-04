@@ -52,17 +52,6 @@
               color="primary"
               text
               :href="
-                'https://github.com/enwi/RNGBridgeDoc/releases/tag/' +
-                status.ota.status
-              "
-              target="_blank"
-            >
-              Release info
-            </v-btn>
-            <v-btn
-              color="primary"
-              text
-              :href="
                 'https://github.com/enwi/RNGBridgeDoc/releases/download/' +
                 status.ota.status +
                 '/RNGBridge.ino.bin'
