@@ -128,7 +128,7 @@
                 <v-card>
                   <v-app-bar flat color="rgba(0, 0, 0, 0)">
                     <!-- <v-btn icon :color="status.o.l ? 'green' : 'red'"> -->
-                    <v-btn icon @click="toggle_out('l')">
+                    <v-btn icon @click="toggle_out('load', !status.o.l)">
                       <v-icon size="24">
                         {{ status.o.l ? mdiPowerPlug : mdiPowerPlugOff }}
                       </v-icon>
@@ -161,8 +161,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o.l"
-                          @click="toggle_out('l')"
+                          v-model="status.o.l"
+                          @change="toggle_out('load', $event)"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -260,8 +260,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o.o1"
-                          @click="toggle_out('o1')"
+                          v-model="status.o.o1"
+                          @change="toggle_out('out1', $event)"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -270,8 +270,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o.o2"
-                          @click="toggle_out('o2')"
+                          v-model="status.o.o2"
+                          @change="toggle_out('out2', $event)"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -280,8 +280,8 @@
                       <v-list-item-action>
                         <v-switch
                           color="accent"
-                          :input-value="status.o.o3"
-                          @click="toggle_out('o3')"
+                          v-model="status.o.o3"
+                          @change="toggle_out('out3', $event)"
                         ></v-switch>
                       </v-list-item-action>
                     </v-list-item>
@@ -637,7 +637,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.7.3</v-col>
+                          <v-col cols="6">Software Version: 2.8.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -911,24 +911,10 @@ export default {
     },
   },
   methods: {
-    toggle_out(output) {
-      switch (output) {
-        case "l":
-          this.api_post_control({ load: !this.status.o[output] });
-          break;
-        case "o1":
-          this.api_post_control({ out1: !this.status.o[output] });
-          break;
-        case "o2":
-          this.api_post_control({ out2: !this.status.o[output] });
-          break;
-        case "o3":
-          this.api_post_control({ out3: !this.status.o[output] });
-          break;
-
-        default:
-          break;
-      }
+    toggle_out(output, value) {
+      const json = {};
+      json[output] = value;
+      this.api_post_control(json);
     },
     set_wifi_mode(value) {
       value = typeof value == "string" ? value : value.value;
