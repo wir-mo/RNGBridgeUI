@@ -743,6 +743,7 @@ export default {
       ],
 
       controllerErrors: {
+        0x80000000: "Fan alarm", // E16
         0x40000000: "Charge MOS short circuit", // E15
         0x20000000: "Anti-reverse MOS short circuit", // E14
         0x10000000: "Solar panel reversly connected", // E13
@@ -887,10 +888,10 @@ export default {
     },
 
     system_errors() {
-      if ((this.status.s.error & 0x7fff0000) > 0) {
+      if ((this.status.s.error & 0xffff0000) > 0) {
         let errors = [];
         let errorVal = 0x10000;
-        for (let i = 1; i <= 15; ++i) {
+        for (let i = 1; i <= 16; ++i) {
           if ((this.status.s.error & errorVal) > 0) {
             errors.push({
               error: `E${i}`,
