@@ -548,6 +548,10 @@ export const api_mixin = {
 
             delete devConfig.dev.outputControls;
 
+            if (typeof devConfig.dev.address !== 'number') {
+                devConfig.dev.address = parseInt(devConfig.dev.address);
+            }
+
             this.api_save(devConfig);
         },
         api_save_wifi() {
