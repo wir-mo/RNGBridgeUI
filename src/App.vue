@@ -334,6 +334,14 @@
                     v-model="config.dev.name"
                   ></v-text-field>
 
+                  <v-text-field
+                    label="Address"
+                    type="number"
+                    min="1"
+                    max="255"
+                    v-model="config.dev.address"
+                  ></v-text-field>
+
                   <v-expansion-panels multiple flat>
                     <v-expansion-panel
                       v-for="control in config.dev.outputControls"
@@ -637,7 +645,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.8.0</v-col>
+                          <v-col cols="6">Software Version: 2.9.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>

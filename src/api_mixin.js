@@ -77,6 +77,7 @@ export const api_mixin = {
             config: {
                 dev: {
                     name: 'RNGBridge',
+                    address: 0xFF,
                     outputControls: {
                         load: {
                             label: "Load Control",
@@ -337,6 +338,10 @@ export const api_mixin = {
                 const name = dev["name"];
                 if (name != null) {
                     this.config.dev.name = name;
+                }
+                const address = dev["address"];
+                if (address != null) {
+                    this.config.dev.address = address;
                 }
 
                 const load = dev["load"];
