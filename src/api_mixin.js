@@ -561,6 +561,9 @@ export const api_mixin = {
             if (typeof this.config.mqtt.interval !== 'number') {
                 this.config.mqtt.interval = parseInt(this.config.mqtt.interval);
             }
+            if (typeof this.config.mqtt.port !== 'number') {
+                this.config.mqtt.port = parseInt(this.config.mqtt.port);
+            }
             this.api_save({ mqtt: this.config.mqtt });
         },
         api_save_pvo() {
