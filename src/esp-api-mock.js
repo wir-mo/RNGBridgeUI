@@ -12,7 +12,7 @@ let status_data = {
 	pvo: {
 		status: 'disabled', //Can be either disabled or connected or disconnected
 	},
-	ota: "2.9.2",
+	ota: "2.10.0",
 	// System status
 	loadEnabledTemp: false,
 	b:

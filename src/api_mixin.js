@@ -132,6 +132,7 @@ export const api_mixin = {
                     interval: 1,
                     hadisco: false,
                     hadiscotopic: "homeassistant",
+                    split: false,
                 },
                 pvo: {
                     enabled: false,
@@ -298,8 +299,12 @@ export const api_mixin = {
                     this.config.mqtt.hadisco = hadisco;
                 }
                 const hadiscotopic = mqtt["hadiscotopic"];
-                if (interval != null) {
+                if (hadiscotopic != null) {
                     this.config.mqtt.hadiscotopic = hadiscotopic;
+                }
+                const split = mqtt["split"];
+                if (split != null) {
+                    this.config.mqtt.split = split;
                 }
             }
             // Special status update
@@ -567,7 +572,6 @@ export const api_mixin = {
             this.api_save({ mqtt: this.config.mqtt });
         },
         api_save_pvo() {
-            // TODO is this really needed?
             if (typeof this.config.pvo.time_offset !== 'number') {
                 this.config.pvo.time_offset = parseInt(this.config.pvo.time_offset);
             }
