@@ -23,7 +23,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.7.1",
     "html-webpack-inline-source-plugin": "1.0.0-beta.2",
-    "html-webpack-plugin": "^4.5.2",
+    "html-webpack-plugin": "^5.5.0",
     "miragejs": "^0.1.45",
     "sass": "^1.53.0",
     "sass-loader": "^10.3.1",
