@@ -225,7 +225,7 @@
                         >Total Generation:</v-list-item-content
                       >
                       <v-list-item-content class="align-end">
-                        {{ status.b.total.toFixed(2) }} kWh
+                        {{ status.b.total.toFixed(0) }} kWh
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
