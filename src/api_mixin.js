@@ -33,7 +33,10 @@ export const api_mixin = {
                     charge: 0,
                     voltage: 0.0,
                     current: 0.0,
-                    temperature: 0.0
+                    temperature: 0.0,
+                    generation: 0.0,
+                    consumption: 0.0,
+                    total: 0.0
                 },
                 l:
                 {
@@ -494,6 +497,18 @@ export const api_mixin = {
                 const batteryTemperature = battery['te'];
                 if (batteryTemperature != null) {
                     this.status.b.temperature = batteryTemperature;
+                }
+                const batteryGeneration = battery['ge'];
+                if (batteryGeneration != null) {
+                    this.status.b.generation = batteryGeneration;
+                }
+                const batteryConsumption = battery['co'];
+                if (batteryConsumption != null) {
+                    this.status.b.consumption = batteryConsumption;
+                }
+                const batteryTotal = battery['to'];
+                if (batteryTotal != null) {
+                    this.status.b.total = batteryTotal;
                 }
             }
         },

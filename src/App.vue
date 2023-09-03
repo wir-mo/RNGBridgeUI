@@ -202,45 +202,30 @@
               <v-flex xs12 sm6 md4>
                 <v-card>
                   <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <v-icon size="24"> {{ mdiServer }} </v-icon>
+                    <v-icon size="24"> {{ mdiLightningBolt }} </v-icon>
                     <v-toolbar-title class="text-h6 pl-3">
-                      Controller
+                      Totals
                     </v-toolbar-title>
                   </v-app-bar>
                   <v-list>
                     <v-list-item>
-                      <v-list-item-content>Temperature:</v-list-item-content>
+                      <v-list-item-content>Generation:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.s.temperature }} °C
+                        {{ status.b.generation.toFixed(2) }} Wh
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>State:</v-list-item-content>
+                      <v-list-item-content>Consumption:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ system_state }}
+                        {{ status.b.consumption.toFixed(2) }} Wh
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Error:</v-list-item-content>
+                      <v-list-item-content
+                        >Total Generation:</v-list-item-content
+                      >
                       <v-list-item-content class="align-end">
-                        <v-chip-group column>
-                          <v-tooltip
-                            v-for="item in system_errors"
-                            :key="item.error"
-                            bottom
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-chip
-                                color="accent"
-                                outlined
-                                v-bind="attrs"
-                                v-on="on"
-                                >{{ item.error }}</v-chip
-                              >
-                            </template>
-                            <span>{{ item.tooltip }}</span>
-                          </v-tooltip>
-                        </v-chip-group>
+                        {{ status.b.total.toFixed(2) }} kWh
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -284,6 +269,53 @@
                           @change="toggle_out('out3', $event)"
                         ></v-switch>
                       </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-card>
+                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
+                    <v-icon size="24"> {{ mdiServer }} </v-icon>
+                    <v-toolbar-title class="text-h6 pl-3">
+                      Controller
+                    </v-toolbar-title>
+                  </v-app-bar>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content>Temperature:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.s.temperature }} °C
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>State:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ system_state }}
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>Error:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        <v-chip-group column>
+                          <v-tooltip
+                            v-for="item in system_errors"
+                            :key="item.error"
+                            bottom
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-chip
+                                color="accent"
+                                outlined
+                                v-bind="attrs"
+                                v-on="on"
+                                >{{ item.error }}</v-chip
+                              >
+                            </template>
+                            <span>{{ item.tooltip }}</span>
+                          </v-tooltip>
+                        </v-chip-group>
+                      </v-list-item-content>
                     </v-list-item>
                   </v-list>
                 </v-card>
@@ -650,7 +682,7 @@
                     <v-col cols="8" class="text--secondary">
                       <v-fade-transition leave-absolute>
                         <v-row v-if="!open" no-gutters style="width: 100%">
-                          <v-col cols="6">Software Version: 2.11.0</v-col>
+                          <v-col cols="6">Software Version: 2.12.0</v-col>
                         </v-row>
                       </v-fade-transition>
                     </v-col>
@@ -712,6 +744,7 @@ import {
   mdiInformation,
   mdiElectricSwitch,
   mdiDownload,
+  mdiLightningBolt,
 } from "@mdi/js";
 
 export default {
@@ -742,6 +775,8 @@ export default {
       mdiElectricSwitch: mdiElectricSwitch,
 
       mdiDownload: mdiDownload,
+
+      mdiLightningBolt: mdiLightningBolt,
 
       displaySettings: false,
       wifiOptions: [
