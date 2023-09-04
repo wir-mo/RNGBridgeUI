@@ -202,38 +202,6 @@
               <v-flex xs12 sm6 md4>
                 <v-card>
                   <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <v-icon size="24"> {{ mdiLightningBolt }} </v-icon>
-                    <v-toolbar-title class="text-h6 pl-3">
-                      Totals
-                    </v-toolbar-title>
-                  </v-app-bar>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content>Generation:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.generation }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>Consumption:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.consumption }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content
-                        >Total Generation:</v-list-item-content
-                      >
-                      <v-list-item-content class="align-end">
-                        {{ status.b.total }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-card>
-                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
                     <v-icon size="24"> {{ mdiElectricSwitch }} </v-icon>
                     <v-toolbar-title class="text-h6 pl-3">
                       Output
@@ -269,6 +237,38 @@
                           @change="toggle_out('out3', $event)"
                         ></v-switch>
                       </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-card>
+                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
+                    <v-icon size="24"> {{ mdiLightningBolt }} </v-icon>
+                    <v-toolbar-title class="text-h6 pl-3">
+                      Totals
+                    </v-toolbar-title>
+                  </v-app-bar>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content>Generation:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.b.generation }} Wh
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>Consumption:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.b.consumption }} Wh
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content
+                        >Total Generation:</v-list-item-content
+                      >
+                      <v-list-item-content class="align-end">
+                        {{ status.b.total }} Wh
+                      </v-list-item-content>
                     </v-list-item>
                   </v-list>
                 </v-card>
