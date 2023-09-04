@@ -211,13 +211,13 @@
                     <v-list-item>
                       <v-list-item-content>Generation:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.generation.toFixed(2) }} Wh
+                        {{ status.b.generation }} Wh
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Consumption:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.consumption.toFixed(2) }} Wh
+                        {{ status.b.consumption }} Wh
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
@@ -225,7 +225,7 @@
                         >Total Generation:</v-list-item-content
                       >
                       <v-list-item-content class="align-end">
-                        {{ status.b.total.toFixed(0) }} kWh
+                        {{ status.b.total }} Wh
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
