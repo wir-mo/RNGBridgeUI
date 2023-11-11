@@ -27,38 +27,43 @@ export const api_mixin = {
                     status: "Unknown",
                 },
                 // System status
-                loadEnabledTemp: false,
-                b:
-                {
-                    charge: 0,
+                cycles: 0,
+                cells: [
+                    { v: 1.0, t: 0.0 },
+                    { v: 2.0, t: 0.0 },
+                    { v: 3.0, t: 0.0 },
+                    { v: 4.0, t: 0.0 },
+                    { v: 5.0, t: 0.0 },
+                    { v: 6.0, t: 0.0 },
+                    { v: 7.0, t: 0.0 },
+                    { v: 8.0, t: 0.0 },
+                    { v: 9.0, t: 0.0 },
+                    { v: 10.0, t: 0.0 },
+                    { v: 11.0, t: 0.0 },
+                    { v: 12.0, t: 0.0 },
+                    { v: 13.0, t: 0.0 },
+                    { v: 14.0, t: 0.0 },
+                    { v: 15.0, t: 0.0 },
+                    { v: 16.0, t: 0.0 },
+                ],
+                ambient: [1.0, 2.0],
+                heater: [1.0, 2.0],
+                temperature: 0.0,
+                current: 1.0,
+                voltage: 12,
+                remaining: 0.4,
+                total: 1.0,
+                chlim: {
                     voltage: 0.0,
                     current: 0.0,
-                    temperature: 0.0,
-                    generation: 0.0,
-                    consumption: 0.0,
-                    total: 0.0
                 },
-                l:
-                {
-                    // Load status (On=true, Off=false)
+                dchlim: {
                     voltage: 0.0,
-                    current: 0.0
-                },
-                p:
-                {
-                    voltage: 0.0,
-                    current: 0.0
-                },
-                s:
-                {
-                    state: 0,
-                    error: 0,
-                    temperature: 0.0
+                    current: 0.0,
                 },
                 // output status
                 o:
                 {
-                    l: false,
                     o1: false,
                     o2: false,
                     o3: false
@@ -82,12 +87,6 @@ export const api_mixin = {
                     name: 'RNGBridge',
                     address: 0xFF,
                     outputControls: {
-                        load: {
-                            label: "Load Control",
-                            inputType: "bsoc",
-                            inverted: false,
-                            range: [10, 50],
-                        },
                         out1: {
                             label: "Output 1",
                             inputType: "bsoc",
@@ -190,9 +189,6 @@ export const api_mixin = {
                 }
 
                 this.checkForBatteryData(json);
-                this.checkForLoadData(json);
-                this.checkForPanelData(json);
-                this.checkForControllerData(json);
                 this.checkForNetworkData(json);
                 this.checkForOutputData(json);
                 this.checkForConfig(json);
@@ -352,10 +348,6 @@ export const api_mixin = {
                     this.config.dev.address = address;
                 }
 
-                const load = dev["load"];
-                if (load != null) {
-                    this.updateOutputControl(this.config.dev.outputControls.load, load);
-                }
                 const out1 = dev["out1"];
                 if (out1 != null) {
                     this.updateOutputControl(this.config.dev.outputControls.out1, out1);
@@ -436,79 +428,149 @@ export const api_mixin = {
                 this.status.o = output;
             }
         },
-        checkForControllerData(json) {
-            const system = json['c'];
-            if (system != null) {
-                const systemState = system['st'];
-                if (systemState != null) {
-                    this.status.s.state = systemState;
-                }
-                const systemError = system['er'];
-                if (systemError != null) {
-                    this.status.s.error = systemError;
-                }
-                const systemTemperature = system['te'];
-                if (systemTemperature != null) {
-                    this.status.s.temperature = systemTemperature;
-                }
+        updateCell(cell, json) {
+            const voltage = json['vo'];
+            if (voltage != null) {
+                cell.voltage = voltage;
             }
-        },
-        checkForPanelData(json) {
-            const panel = json['p'];
-            if (panel != null) {
-                const panelVoltage = panel['vo'];
-                if (panelVoltage != null) {
-                    this.status.p.voltage = panelVoltage;
-                }
-                const panelCurrent = panel['cu'];
-                if (panelCurrent != null) {
-                    this.status.p.current = panelCurrent;
-                }
-            }
-        },
-        checkForLoadData(json) {
-            const load = json['l'];
-            if (load != null) {
-                const loadVoltage = load['vo'];
-                if (loadVoltage != null) {
-                    this.status.l.voltage = loadVoltage;
-                }
-                const loadCurrent = load['cu'];
-                if (loadCurrent != null) {
-                    this.status.l.current = loadCurrent;
-                }
+            const temperature = json['te'];
+            if (temperature != null) {
+                cell.temperature = temperature;
             }
         },
         checkForBatteryData(json) {
-            const battery = json['b'];
-            if (battery != null) {
-                const batteryCharge = battery['ch'];
-                if (batteryCharge != null) {
-                    this.status.b.charge = batteryCharge;
+            const cycles = json['cy'];
+            if (cycles != null) {
+                this.status.cycles = cycles;
+            }
+
+            const c1 = json['c1'];
+            if (c1 != null) {
+                this.updateCell(this.status.cells[0], c1);
+            }
+            const c2 = json['c2'];
+            if (c2 != null) {
+                this.updateCell(this.status.cells[1], c2);
+            }
+            const c3 = json['c1'];
+            if (c3 != null) {
+                this.updateCell(this.status.cells[2], c3);
+            }
+            const c4 = json['c1'];
+            if (c4 != null) {
+                this.updateCell(this.status.cells[3], c4);
+            }
+            const c5 = json['c1'];
+            if (c5 != null) {
+                this.updateCell(this.status.cells[4], c5);
+            }
+            const c6 = json['c1'];
+            if (c6 != null) {
+                this.updateCell(this.status.cells[5], c6);
+            }
+            const c7 = json['c1'];
+            if (c7 != null) {
+                this.updateCell(this.status.cells[6], c7);
+            }
+            const c8 = json['c1'];
+            if (c8 != null) {
+                this.updateCell(this.status.cells[7], c8);
+            }
+            const c9 = json['c1'];
+            if (c9 != null) {
+                this.updateCell(this.status.cells[8], c9);
+            }
+            const c10 = json['c1'];
+            if (c10 != null) {
+                this.updateCell(this.status.cells[9], c10);
+            }
+            const c11 = json['c1'];
+            if (c11 != null) {
+                this.updateCell(this.status.cells[10], c11);
+            }
+            const c12 = json['c1'];
+            if (c12 != null) {
+                this.updateCell(this.status.cells[11], c12);
+            }
+            const c13 = json['c1'];
+            if (c13 != null) {
+                this.updateCell(this.status.cells[12], c13);
+            }
+            const c14 = json['c14'];
+            if (c14 != null) {
+                this.updateCell(this.status.cells[13], c14);
+            }
+            const c15 = json['c15'];
+            if (c15 != null) {
+                this.updateCell(this.status.cells[14], c15);
+            }
+            const c16 = json['c16'];
+            if (c16 != null) {
+                this.updateCell(this.status.cells[15], c16);
+            }
+
+            const a1te = json['a1te'];
+            if (a1te != null) {
+                this.status.ambient[0] = a1te;
+            }
+            const a2te = json['a2te'];
+            if (a1te != null) {
+                this.status.ambient[1] = a2te;
+            }
+
+            const h1te = json['h1te'];
+            if (h1te != null) {
+                this.status.heater[0] = h1te;
+            }
+            const h2te = json['h2te'];
+            if (a1te != null) {
+                this.status.heater[1] = h2te;
+            }
+
+            const bmste = json['bmste'];
+            if (bmste != null) {
+                this.status.temperature = bmste;
+            }
+
+            const cu = json['cu'];
+            if (cu != null) {
+                this.status.current = cu;
+            }
+
+            const vo = json['vo'];
+            if (vo != null) {
+                this.status.voltage = vo;
+            }
+
+            const rem = json['rem'];
+            if (rem != null) {
+                this.status.remaining = rem;
+            }
+            const tot = json['tot'];
+            if (tot != null) {
+                this.status.total = tot;
+            }
+
+            const chlim = json['chlim'];
+            if (chlim != null) {
+                const chlimvo = chlim['vo'];
+                if (chlimvo != null) {
+                    this.status.chlim.voltage = chlimvo;
                 }
-                const batteryVoltage = battery['vo'];
-                if (batteryVoltage != null) {
-                    this.status.b.voltage = batteryVoltage;
+                const chlimcu = chlim['cu'];
+                if (chlimcu != null) {
+                    this.status.chlim.current = chlimcu;
                 }
-                const batteryCurrent = battery['cu'];
-                if (batteryCurrent != null) {
-                    this.status.b.current = batteryCurrent;
+            }
+            const dchlim = json['dchlim'];
+            if (dchlim != null) {
+                const dchlimvo = dchlim['vo'];
+                if (dchlimvo != null) {
+                    this.status.dchlim.voltage = dchlimvo;
                 }
-                const batteryTemperature = battery['te'];
-                if (batteryTemperature != null) {
-                    this.status.b.temperature = batteryTemperature;
-                }
-                const batteryGeneration = battery['ge'];
-                if (batteryGeneration != null) {
-                    this.status.b.generation = batteryGeneration;
-                }
-                const batteryConsumption = battery['co'];
-                if (batteryConsumption != null) {
-                    this.status.b.consumption = batteryConsumption;
-                }
-                const batteryTotal = battery['to'];
-                if (batteryTotal != null) {
-                    this.status.b.total = batteryTotal;
+                const dchlimcu = dchlim['cu'];
+                if (dchlimcu != null) {
+                    this.status.dchlim.current = dchlimcu;
                 }
             }
         },
@@ -542,12 +604,6 @@ export const api_mixin = {
 
         api_save_device() {
             let devConfig = { dev: JSON.parse(JSON.stringify(this.config.dev)) };
-            devConfig.dev.load = devConfig.dev.outputControls.load;
-            devConfig.dev.load.min = devConfig.dev.load.range[0];
-            devConfig.dev.load.max = devConfig.dev.load.range[1];
-            delete devConfig.dev.load.range;
-            delete devConfig.dev.load.label;
-
             devConfig.dev.out1 = devConfig.dev.outputControls.out1;
             devConfig.dev.out1.min = devConfig.dev.out1.range[0];
             devConfig.dev.out1.max = devConfig.dev.out1.range[1];

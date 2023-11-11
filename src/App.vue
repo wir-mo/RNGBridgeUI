@@ -93,107 +93,117 @@
                       {{ battery_icon }}
                     </v-icon>
                     <v-toolbar-title class="text-h6 pl-3">
-                      Battery
+                      Cells
+                    </v-toolbar-title>
+                  </v-app-bar>
+                  <v-list>
+                    <v-list-item
+                      v-for="chunk in Math.ceil(status.cells.length / 2)"
+                      :key="chunk"
+                    >
+                      <v-list-item-content
+                        >C{{ chunk * 2 - 1 }}:</v-list-item-content
+                      >
+                      <v-list-item-content class="align-end">
+                        {{ status.cells[chunk * 2 - 2].v }} V
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.cells[chunk * 2 - 2].t }} °C
+                      </v-list-item-content>
+                      <v-list-item-content
+                        >C{{ chunk * 2 }}:</v-list-item-content
+                      >
+                      <v-list-item-content class="align-end">
+                        {{ status.cells[chunk * 2 - 1].v }} V
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.cells[chunk * 2 - 1].t }} °C
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                </v-card>
+              </v-flex>
+              <v-flex xs12 sm6 md4>
+                <v-card>
+                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
+                    <v-icon size="24"> {{ mdiServer }} </v-icon>
+                    <v-toolbar-title class="text-h6 pl-3">
+                      BMS
                     </v-toolbar-title>
                   </v-app-bar>
                   <v-list>
                     <v-list-item>
-                      <v-list-item-content>Capacity:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.charge }} %
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>Voltage:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.voltage.toFixed(2) }} V
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
                       <v-list-item-content>Current:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.current.toFixed(2) }} A
+                        {{ status.current }} A
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.voltage }} V
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.current * status.voltage }} W
+                      </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>SOC:</v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ (status.remaining / status.total) * 100 }} %
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.remaining }} Ah
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.total }} Ah
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>Temperature:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.b.temperature }} °C
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-card>
-                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <!-- <v-btn icon :color="status.o.l ? 'green' : 'red'"> -->
-                    <v-btn icon @click="toggle_out('load', !status.o.l)">
-                      <v-icon size="24">
-                        {{ status.o.l ? mdiPowerPlug : mdiPowerPlugOff }}
-                      </v-icon>
-                    </v-btn>
-                    <v-toolbar-title class="text-h6 pl-0">
-                      Load
-                    </v-toolbar-title>
-                  </v-app-bar>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content>Voltage:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.l.voltage.toFixed(2) }} V
+                        {{ status.temperature }} °C
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Current:</v-list-item-content>
+                      <v-list-item-content>Ambient:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.l.current.toFixed(2) }} A
+                        {{ status.ambient[0] }} °C
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.ambient[1] }} °C
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Power:</v-list-item-content>
+                      <v-list-item-content>Heater:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ (status.l.voltage * status.l.current).toFixed(2) }} W
+                        {{ status.heater[0] }} °C
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.heater[1] }} °C
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Enabled:</v-list-item-content>
-                      <v-list-item-action>
-                        <v-switch
-                          color="accent"
-                          v-model="status.o.l"
-                          @change="toggle_out('load', $event)"
-                        ></v-switch>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-card>
-                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <v-icon size="24"> {{ mdiSolarPanel }} </v-icon>
-                    <v-toolbar-title class="text-h6 pl-3">
-                      Panel
-                    </v-toolbar-title>
-                  </v-app-bar>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content>Voltage:</v-list-item-content>
+                      <v-list-item-content>Charge Limit:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.p.voltage.toFixed(2) }} V
+                        {{ status.chlim.current }} A
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.chlim.voltage }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Current:</v-list-item-content>
+                      <v-list-item-content
+                        >Discharge Limit:</v-list-item-content
+                      >
                       <v-list-item-content class="align-end">
-                        {{ status.p.current.toFixed(2) }} A
+                        {{ status.dchlim.current }} A
+                      </v-list-item-content>
+                      <v-list-item-content class="align-end">
+                        {{ status.dchlim.temperature }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
-                      <v-list-item-content>Power:</v-list-item-content>
+                      <v-list-item-content>Cycles:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ (status.p.voltage * status.p.current).toFixed(2) }} W
+                        {{ status.cycles }}
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -237,85 +247,6 @@
                           @change="toggle_out('out3', $event)"
                         ></v-switch>
                       </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-card>
-                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <v-icon size="24"> {{ mdiLightningBolt }} </v-icon>
-                    <v-toolbar-title class="text-h6 pl-3">
-                      Totals
-                    </v-toolbar-title>
-                  </v-app-bar>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content>Generation:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.generation }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>Consumption:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.b.consumption }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content
-                        >Total Generation:</v-list-item-content
-                      >
-                      <v-list-item-content class="align-end">
-                        {{ status.b.total }} Wh
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list>
-                </v-card>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-card>
-                  <v-app-bar flat color="rgba(0, 0, 0, 0)">
-                    <v-icon size="24"> {{ mdiServer }} </v-icon>
-                    <v-toolbar-title class="text-h6 pl-3">
-                      Controller
-                    </v-toolbar-title>
-                  </v-app-bar>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content>Temperature:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ status.s.temperature }} °C
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>State:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        {{ system_state }}
-                      </v-list-item-content>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>Error:</v-list-item-content>
-                      <v-list-item-content class="align-end">
-                        <v-chip-group column>
-                          <v-tooltip
-                            v-for="item in system_errors"
-                            :key="item.error"
-                            bottom
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-chip
-                                color="accent"
-                                outlined
-                                v-bind="attrs"
-                                v-on="on"
-                                >{{ item.error }}</v-chip
-                              >
-                            </template>
-                            <span>{{ item.tooltip }}</span>
-                          </v-tooltip>
-                        </v-chip-group>
-                      </v-list-item-content>
                     </v-list-item>
                   </v-list>
                 </v-card>
@@ -845,44 +776,46 @@ export default {
     },
 
     battery_icon() {
-      if (this.status.b.charge < 10) {
+      const soc = (this.status.remaining / this.status.total) * 100;
+      if (soc < 10) {
         return mdiBatteryOutline;
       }
-      if (this.status.b.charge < 20) {
+      if (soc < 20) {
         return mdiBattery10;
       }
-      if (this.status.b.charge < 30) {
+      if (soc < 30) {
         return mdiBattery20;
       }
-      if (this.status.b.charge < 40) {
+      if (soc < 40) {
         return mdiBattery30;
       }
-      if (this.status.b.charge < 50) {
+      if (soc < 50) {
         return mdiBattery40;
       }
-      if (this.status.b.charge < 60) {
+      if (soc < 60) {
         return mdiBattery50;
       }
-      if (this.status.b.charge < 70) {
+      if (soc < 70) {
         return mdiBattery60;
       }
-      if (this.status.b.charge < 80) {
+      if (soc < 80) {
         return mdiBattery70;
       }
-      if (this.status.b.charge < 90) {
+      if (soc < 90) {
         return mdiBattery80;
       }
-      if (this.status.b.charge < 100) {
+      if (soc < 100) {
         return mdiBattery90;
       }
       return mdiBattery;
     },
 
     battery_color() {
-      if (this.status.b.charge < 33) {
+      const soc = (this.status.remaining / this.status.total) * 100;
+      if (soc < 33) {
         return "red";
       }
-      if (this.status.b.charge < 66) {
+      if (soc < 66) {
         return "orange";
       }
       return "green";
