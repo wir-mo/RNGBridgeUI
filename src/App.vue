@@ -186,7 +186,7 @@
                     <v-list-item>
                       <v-list-item-content>Charge Limit:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.chlim.current }} A
+                        {{ status.chlim.toFixed(2) }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
                         {{ status.chlim.voltage.toFixed(2) }} V
@@ -197,7 +197,7 @@
                         >Discharge Limit:</v-list-item-content
                       >
                       <v-list-item-content class="align-end">
-                        {{ status.dchlim.current }} A
+                        {{ status.dchlim.current.toFixed(2) }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
                         {{ status.dchlim.voltage.toFixed(2) }} V
