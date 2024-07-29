@@ -431,11 +431,11 @@ export const api_mixin = {
         updateCell(cell, json) {
             const voltage = json['vo'];
             if (voltage != null) {
-                cell.voltage = voltage;
+                cell.v = voltage;
             }
             const temperature = json['te'];
             if (temperature != null) {
-                cell.temperature = temperature;
+                cell.t = temperature;
             }
         },
         checkForBatteryData(json) {
@@ -452,47 +452,47 @@ export const api_mixin = {
             if (c2 != null) {
                 this.updateCell(this.status.cells[1], c2);
             }
-            const c3 = json['c1'];
+            const c3 = json['c3'];
             if (c3 != null) {
                 this.updateCell(this.status.cells[2], c3);
             }
-            const c4 = json['c1'];
+            const c4 = json['c4'];
             if (c4 != null) {
                 this.updateCell(this.status.cells[3], c4);
             }
-            const c5 = json['c1'];
+            const c5 = json['c5'];
             if (c5 != null) {
                 this.updateCell(this.status.cells[4], c5);
             }
-            const c6 = json['c1'];
+            const c6 = json['c6'];
             if (c6 != null) {
                 this.updateCell(this.status.cells[5], c6);
             }
-            const c7 = json['c1'];
+            const c7 = json['c7'];
             if (c7 != null) {
                 this.updateCell(this.status.cells[6], c7);
             }
-            const c8 = json['c1'];
+            const c8 = json['c8'];
             if (c8 != null) {
                 this.updateCell(this.status.cells[7], c8);
             }
-            const c9 = json['c1'];
+            const c9 = json['c9'];
             if (c9 != null) {
                 this.updateCell(this.status.cells[8], c9);
             }
-            const c10 = json['c1'];
+            const c10 = json['c10'];
             if (c10 != null) {
                 this.updateCell(this.status.cells[9], c10);
             }
-            const c11 = json['c1'];
+            const c11 = json['c11'];
             if (c11 != null) {
                 this.updateCell(this.status.cells[10], c11);
             }
-            const c12 = json['c1'];
+            const c12 = json['c12'];
             if (c12 != null) {
                 this.updateCell(this.status.cells[11], c12);
             }
-            const c13 = json['c1'];
+            const c13 = json['c13'];
             if (c13 != null) {
                 this.updateCell(this.status.cells[12], c13);
             }
