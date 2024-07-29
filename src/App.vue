@@ -135,25 +135,28 @@
                     <v-list-item>
                       <v-list-item-content>Current:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.current }} A
+                        {{ status.current.toFixed(2) }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.voltage }} V
+                        {{ status.voltage.toFixed(2) }} V
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.current * status.voltage }} W
+                        {{ (status.current * status.voltage).toFixed(2) }} W
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
                       <v-list-item-content>SOC:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ (status.remaining / status.total) * 100 }} %
+                        {{
+                          ((status.remaining / status.total) * 100).toFixed(0)
+                        }}
+                        %
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.remaining }} Ah
+                        {{ status.remaining.toFixed(1) }} Ah
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.total }} Ah
+                        {{ status.total.toFixed(1) }} Ah
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
@@ -186,7 +189,7 @@
                         {{ status.chlim.current }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.chlim.voltage }} V
+                        {{ status.chlim.voltage.toFixed(2) }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
@@ -197,7 +200,7 @@
                         {{ status.dchlim.current }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.dchlim.temperature }} V
+                        {{ status.dchlim.voltage.toFixed(2) }} V
                       </v-list-item-content>
                     </v-list-item>
                     <v-list-item>
