@@ -105,7 +105,7 @@
                         >C{{ chunk * 2 - 1 }}:</v-list-item-content
                       >
                       <v-list-item-content class="align-end">
-                        {{ status.cells[chunk * 2 - 2].v }} V
+                        {{ status.cells[chunk * 2 - 2].v.toFixed(2) }} V
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
                         {{ status.cells[chunk * 2 - 2].t }} °C
@@ -114,7 +114,7 @@
                         >C{{ chunk * 2 }}:</v-list-item-content
                       >
                       <v-list-item-content class="align-end">
-                        {{ status.cells[chunk * 2 - 1].v }} V
+                        {{ status.cells[chunk * 2 - 1].v.toFixed(2) }} V
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
                         {{ status.cells[chunk * 2 - 1].t }} °C
