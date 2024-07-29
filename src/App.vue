@@ -186,7 +186,7 @@
                     <v-list-item>
                       <v-list-item-content>Charge Limit:</v-list-item-content>
                       <v-list-item-content class="align-end">
-                        {{ status.chlim.toFixed(2) }} A
+                        {{ status.chlim.current.toFixed(2) }} A
                       </v-list-item-content>
                       <v-list-item-content class="align-end">
                         {{ status.chlim.voltage.toFixed(2) }} V
