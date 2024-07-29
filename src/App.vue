@@ -54,7 +54,7 @@
               :href="
                 'https://github.com/enwi/RNGBridgeDoc/releases/download/' +
                 status.ota.status +
-                '/RNGBridge.ino.bin'
+                '/RNGBridgeSmartBattery.ino.bin'
               "
               target="_blank"
             >
