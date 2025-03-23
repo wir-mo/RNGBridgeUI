@@ -811,9 +811,11 @@ export default {
       inputTypes: {
         disabled: { unit: "", min: 0, max: 160, step: 0.1 },
         bsoc: { unit: "%", min: 0, max: 100, step: 1 },
+        btemp: { unit: "°C", min: -20, max: 100, step: 1 },
         bvoltage: { unit: "V", min: 0, max: 48, step: 0.1 },
         pvoltage: { unit: "V", min: 0, max: 160, step: 0.1 },
         pcurrent: { unit: "A", min: 0, max: 120, step: 0.1 },
+        ctemp: { unit: "°C", min: -20, max: 100, step: 1 },
       },
       inputOptions: [
         {
@@ -829,12 +831,20 @@ export default {
           value: "bvoltage",
         },
         {
+          text: "Battery Temperature",
+          value: "btemp",
+        },
+        {
           text: "Panel Voltage",
           value: "pvoltage",
         },
         {
           text: "Panel Current",
           value: "pcurrent",
+        },
+        {
+          text: "Controller Temperature",
+          value: "ctemp",
         },
       ],
     };
