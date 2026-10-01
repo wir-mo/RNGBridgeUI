@@ -192,6 +192,11 @@ export const api_mixin = {
                         this.status.network.rssi = rssi;
                     }
 
+                    const deviceType = json["t"];
+                    if (deviceType != null) {
+                        this.config.dev.type = deviceType;
+                    }
+
                     this.checkForBatteryData(json);
                     this.checkForLoadData(json);
                     this.checkForPanelData(json);
