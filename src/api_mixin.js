@@ -46,6 +46,23 @@ export const api_mixin = {
                 s: { state: 0, error: 0, temperature: 0.0 },
                 // output status
                 o: { l: false, o1: false, o2: false, o3: false },
+                bms: {
+                    voltage: null,
+                    current: null,
+                    remaining: null,
+                    total: null,
+                    cycles: null,
+                    temperature: null,
+                    ambientTemperatures: [null, null],
+                    heaterTemperatures: [null, null],
+                    chargeLimit: { voltage: null, current: null },
+                    dischargeLimit: { voltage: null, current: null },
+                    cells: Array.from({ length: 16 }, (_, index) => ({
+                        number: index + 1,
+                        voltage: null,
+                        temperature: null,
+                    })),
+                },
                 network: {
                     rssi: 0,
                     wifi_client: {
@@ -181,6 +198,7 @@ export const api_mixin = {
                     this.checkForControllerData(json);
                     this.checkForNetworkData(json);
                     this.checkForOutputData(json);
+                    this.checkForBmsData(json);
                     this.checkForConfig(json);
                 },
                 false
@@ -443,6 +461,60 @@ export const api_mixin = {
             if (output != null) {
                 this.status.o = output;
             }
+        },
+        checkForBmsData(json) {
+            const bms = this.status.bms;
+            const fields = {
+                vo: "voltage",
+                cu: "current",
+                rem: "remaining",
+                tot: "total",
+                cy: "cycles",
+                bmste: "temperature",
+            };
+            Object.entries(fields).forEach(([key, property]) => {
+                if (json[key] != null) {
+                    bms[property] = json[key];
+                }
+            });
+
+            bms.ambientTemperatures.forEach((_, index) => {
+                const value = json[`a${index + 1}te`];
+                if (value != null) {
+                    bms.ambientTemperatures.splice(index, 1, value);
+                }
+            });
+            bms.heaterTemperatures.forEach((_, index) => {
+                const value = json[`h${index + 1}te`];
+                if (value != null) {
+                    bms.heaterTemperatures.splice(index, 1, value);
+                }
+            });
+
+            ["chargeLimit", "dischargeLimit"].forEach((property) => {
+                const source =
+                    json[property === "chargeLimit" ? "chlim" : "dchlim"];
+                if (source != null) {
+                    if (source.vo != null) {
+                        bms[property].voltage = source.vo;
+                    }
+                    if (source.cu != null) {
+                        bms[property].current = source.cu;
+                    }
+                }
+            });
+
+            bms.cells.forEach((cell) => {
+                const source = json[`c${cell.number}`];
+                if (source != null) {
+                    if (source.vo != null) {
+                        cell.voltage = source.vo;
+                    }
+                    if (source.te != null) {
+                        cell.temperature = source.te;
+                    }
+                }
+            });
         },
         checkForControllerData(json) {
             const system = json["c"];
