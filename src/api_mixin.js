@@ -28,59 +28,43 @@ export const api_mixin = {
                 },
                 // System status
                 loadEnabledTemp: false,
-                b:
-                {
+                b: {
                     charge: 0,
                     voltage: 0.0,
                     current: 0.0,
                     temperature: 0.0,
                     generation: 0.0,
                     consumption: 0.0,
-                    total: 0.0
+                    total: 0.0,
                 },
-                l:
-                {
+                l: {
                     // Load status (On=true, Off=false)
                     voltage: 0.0,
-                    current: 0.0
+                    current: 0.0,
                 },
-                p:
-                {
-                    voltage: 0.0,
-                    current: 0.0
-                },
-                s:
-                {
-                    state: 0,
-                    error: 0,
-                    temperature: 0.0
-                },
+                p: { voltage: 0.0, current: 0.0 },
+                s: { state: 0, error: 0, temperature: 0.0 },
                 // output status
-                o:
-                {
-                    l: false,
-                    o1: false,
-                    o2: false,
-                    o3: false
-                },
+                o: { l: false, o1: false, o2: false, o3: false },
                 network: {
                     rssi: 0,
                     wifi_client: {
-                        status: "disabled", //Can be either disabled or connected or disconnected
+                        status: "disabled", // Can be either disabled or connected or disconnected
                         ip: "111.222.333.444",
                         netmask: "255.255.255.0",
-                        dns: "1.3.4.5"
+                        dns: "1.3.4.5",
                     },
                     wifi_ap: {
-                        status: "disabled", //Can be either disabled or enabled
+                        status: "disabled", // Can be either disabled or enabled
                         ip: "111.222.333.444",
                     },
                 },
             },
             config: {
                 dev: {
-                    name: 'RNGBridge',
-                    address: 0xFF,
+                    type: "dummy",
+                    name: "RSBridge",
+                    address: 0xff,
                     outputControls: {
                         load: {
                             label: "Load Control",
@@ -127,7 +111,7 @@ export const api_mixin = {
                     enabled: false,
                     server: "111.222.333.444",
                     port: 1883,
-                    id: "RNGBridge",
+                    id: "RSBridge",
                     user: "xxx",
                     has_password: false,
                     password: null,
@@ -144,7 +128,7 @@ export const api_mixin = {
                     time_offset: 0,
                 },
             },
-        }
+        };
     },
     created() {
         this.setupEventSource();
@@ -170,40 +154,48 @@ export const api_mixin = {
             eventSource.onmessage = (event) => {
                 console.debug(`EventSource message: ${event.data}`);
             };
-            eventSource.addEventListener('status', (event) => {
-                console.debug(`Event[status]: ${event.data}`);
-                let json = JSON.parse(event.data);
+            eventSource.addEventListener(
+                "status",
+                (event) => {
+                    console.debug(`Event[status]: ${event.data}`);
+                    let json = JSON.parse(event.data);
 
-                const uptime = json['up'];
-                if (uptime != null) {
-                    this.status.uptime = uptime;
-                }
+                    const uptime = json["up"];
+                    if (uptime != null) {
+                        this.status.uptime = uptime;
+                    }
 
-                const heap = json['he'];
-                if (heap != null) {
-                    this.status.heap = heap;
-                }
+                    const heap = json["he"];
+                    if (heap != null) {
+                        this.status.heap = heap;
+                    }
 
-                const rssi = json['rssi'];
-                if (rssi != null) {
-                    this.status.network.rssi = rssi;
-                }
+                    const rssi = json["rssi"];
+                    if (rssi != null) {
+                        this.status.network.rssi = rssi;
+                    }
 
-                this.checkForBatteryData(json);
-                this.checkForLoadData(json);
-                this.checkForPanelData(json);
-                this.checkForControllerData(json);
-                this.checkForNetworkData(json);
-                this.checkForOutputData(json);
-                this.checkForConfig(json);
-            }, false);
-            eventSource.addEventListener('ota', (event) => {
-                console.debug(`Event[ota]: ${event.data}`);
-                this.status.ota.progress = event.data;
-            }, false);
+                    this.checkForBatteryData(json);
+                    this.checkForLoadData(json);
+                    this.checkForPanelData(json);
+                    this.checkForControllerData(json);
+                    this.checkForNetworkData(json);
+                    this.checkForOutputData(json);
+                    this.checkForConfig(json);
+                },
+                false
+            );
+            eventSource.addEventListener(
+                "ota",
+                (event) => {
+                    console.debug(`Event[ota]: ${event.data}`);
+                    this.status.ota.progress = event.data;
+                },
+                false
+            );
         },
         checkForConfig(json) {
-            const wifi = json['wifi'];
+            const wifi = json["wifi"];
             if (wifi != null) {
                 const client_enabled = wifi["client_enabled"];
                 if (client_enabled != null) {
@@ -259,7 +251,7 @@ export const api_mixin = {
                 }
             }
 
-            const mqtt = json['mqtt'];
+            const mqtt = json["mqtt"];
             if (mqtt != null) {
                 const enabled = mqtt["enabled"];
                 if (enabled != null) {
@@ -316,7 +308,7 @@ export const api_mixin = {
                 this.status.mqtt.status = mqtt_status;
             }
 
-            const pvo = json['pvo'];
+            const pvo = json["pvo"];
             if (pvo != null) {
                 const enabled = pvo["enabled"];
                 if (enabled != null) {
@@ -343,6 +335,10 @@ export const api_mixin = {
 
             const dev = json["dev"];
             if (dev != null) {
+                const type = dev["type"];
+                if (type != null) {
+                    this.config.dev.type = type;
+                }
                 const name = dev["name"];
                 if (name != null) {
                     this.config.dev.name = name;
@@ -354,19 +350,31 @@ export const api_mixin = {
 
                 const load = dev["load"];
                 if (load != null) {
-                    this.updateOutputControl(this.config.dev.outputControls.load, load);
+                    this.updateOutputControl(
+                        this.config.dev.outputControls.load,
+                        load
+                    );
                 }
                 const out1 = dev["out1"];
                 if (out1 != null) {
-                    this.updateOutputControl(this.config.dev.outputControls.out1, out1);
+                    this.updateOutputControl(
+                        this.config.dev.outputControls.out1,
+                        out1
+                    );
                 }
                 const out2 = dev["out2"];
                 if (out2 != null) {
-                    this.updateOutputControl(this.config.dev.outputControls.out2, out2);
+                    this.updateOutputControl(
+                        this.config.dev.outputControls.out2,
+                        out2
+                    );
                 }
                 const out3 = dev["out3"];
                 if (out3 != null) {
-                    this.updateOutputControl(this.config.dev.outputControls.out3, out3);
+                    this.updateOutputControl(
+                        this.config.dev.outputControls.out3,
+                        out3
+                    );
                 }
             }
 
@@ -395,35 +403,35 @@ export const api_mixin = {
             }
         },
         checkForNetworkData(json) {
-            const network = json['network'];
+            const network = json["network"];
             if (network != null) {
-                const wifi_client = network['wifi_client'];
+                const wifi_client = network["wifi_client"];
                 if (wifi_client != null) {
-                    const status = wifi_client['status'];
+                    const status = wifi_client["status"];
                     if (status != null) {
                         this.status.network.wifi_client.status = status;
                     }
-                    const ip = wifi_client['ip'];
+                    const ip = wifi_client["ip"];
                     if (ip != null) {
                         this.status.network.wifi_client.ip = ip;
                     }
-                    const netmask = wifi_client['netmask'];
+                    const netmask = wifi_client["netmask"];
                     if (netmask != null) {
                         this.status.network.wifi_client.netmask = netmask;
                     }
-                    const dns = wifi_client['dns'];
+                    const dns = wifi_client["dns"];
                     if (dns != null) {
                         this.status.network.wifi_client.dns = dns;
                     }
                 }
 
-                const wifi_ap = network['wifi_ap'];
+                const wifi_ap = network["wifi_ap"];
                 if (wifi_ap != null) {
-                    const status = wifi_ap['status'];
+                    const status = wifi_ap["status"];
                     if (status != null) {
                         this.status.network.wifi_ap.status = status;
                     }
-                    const ip = wifi_ap['ip'];
+                    const ip = wifi_ap["ip"];
                     if (ip != null) {
                         this.status.network.wifi_ap.ip = ip;
                     }
@@ -431,82 +439,82 @@ export const api_mixin = {
             }
         },
         checkForOutputData(json) {
-            const output = json['o'];
+            const output = json["o"];
             if (output != null) {
                 this.status.o = output;
             }
         },
         checkForControllerData(json) {
-            const system = json['c'];
+            const system = json["c"];
             if (system != null) {
-                const systemState = system['st'];
+                const systemState = system["st"];
                 if (systemState != null) {
                     this.status.s.state = systemState;
                 }
-                const systemError = system['er'];
+                const systemError = system["er"];
                 if (systemError != null) {
                     this.status.s.error = systemError;
                 }
-                const systemTemperature = system['te'];
+                const systemTemperature = system["te"];
                 if (systemTemperature != null) {
                     this.status.s.temperature = systemTemperature;
                 }
             }
         },
         checkForPanelData(json) {
-            const panel = json['p'];
+            const panel = json["p"];
             if (panel != null) {
-                const panelVoltage = panel['vo'];
+                const panelVoltage = panel["vo"];
                 if (panelVoltage != null) {
                     this.status.p.voltage = panelVoltage;
                 }
-                const panelCurrent = panel['cu'];
+                const panelCurrent = panel["cu"];
                 if (panelCurrent != null) {
                     this.status.p.current = panelCurrent;
                 }
             }
         },
         checkForLoadData(json) {
-            const load = json['l'];
+            const load = json["l"];
             if (load != null) {
-                const loadVoltage = load['vo'];
+                const loadVoltage = load["vo"];
                 if (loadVoltage != null) {
                     this.status.l.voltage = loadVoltage;
                 }
-                const loadCurrent = load['cu'];
+                const loadCurrent = load["cu"];
                 if (loadCurrent != null) {
                     this.status.l.current = loadCurrent;
                 }
             }
         },
         checkForBatteryData(json) {
-            const battery = json['b'];
+            const battery = json["b"];
             if (battery != null) {
-                const batteryCharge = battery['ch'];
+                const batteryCharge = battery["ch"];
                 if (batteryCharge != null) {
                     this.status.b.charge = batteryCharge;
                 }
-                const batteryVoltage = battery['vo'];
+                const batteryVoltage = battery["vo"];
                 if (batteryVoltage != null) {
                     this.status.b.voltage = batteryVoltage;
                 }
-                const batteryCurrent = battery['cu'];
+                const batteryCurrent = battery["cu"];
                 if (batteryCurrent != null) {
                     this.status.b.current = batteryCurrent;
                 }
-                const batteryTemperature = battery['te'];
+                const batteryTemperature = battery["te"];
                 if (batteryTemperature != null) {
                     this.status.b.temperature = batteryTemperature;
                 }
-                const batteryGeneration = battery['ge'];
+                const batteryGeneration = battery["ge"];
                 if (batteryGeneration != null) {
                     this.status.b.generation = batteryGeneration;
                 }
-                const batteryConsumption = battery['co'];
+                const batteryConsumption = battery["co"];
                 if (batteryConsumption != null) {
                     this.status.b.consumption = batteryConsumption;
                 }
-                const batteryTotal = battery['to'];
+                const batteryTotal = battery["to"];
                 if (batteryTotal != null) {
                     this.status.b.total = batteryTotal;
                 }
@@ -514,34 +522,42 @@ export const api_mixin = {
         },
 
         request_config() {
-            axios.get("/api/config").then(response => {
-                this.checkForConfig(response.data);
-            }).catch(error => {
-                this.m_dialog.headline = "Error";
-                this.m_dialog.message = `Could not request config:\n${error}`;
-                this.m_dialog.show = true;
-            });
+            axios
+                .get("/api/config")
+                .then((response) => {
+                    this.checkForConfig(response.data);
+                })
+                .catch((error) => {
+                    this.m_dialog.headline = "Error";
+                    this.m_dialog.message = `Could not request config:\n${error}`;
+                    this.m_dialog.show = true;
+                });
         },
 
         /**
          * Control the renogy charge controller load output and other outputs (Out1, Out2 and Out3)
-         * @param {json} json JSON object containing key value pairs where the key is one of 
+         * @param {json} json JSON object containing key value pairs where the key is one of
          * load, out1, out2 or out3 and the value a boolean (true turn on, false turn off)
          */
         api_post_control(json) {
-            axios.post("/api/control", json).then(response => {
-                if (response.data === "OK") {
-                    console.info("/api/control success");
-                }
-            }).catch(error => {
-                this.m_dialog.headline = "Error";
-                this.m_dialog.message = `There was an error while trying to control load, out1, out2 or out3:\n${error}`;
-                this.m_dialog.show = true;
-            });
+            axios
+                .post("/api/control", json)
+                .then((response) => {
+                    if (response.data === "OK") {
+                        console.info("/api/control success");
+                    }
+                })
+                .catch((error) => {
+                    this.m_dialog.headline = "Error";
+                    this.m_dialog.message = `There was an error while trying to control load, out1, out2 or out3:\n${error}`;
+                    this.m_dialog.show = true;
+                });
         },
 
         api_save_device() {
-            let devConfig = { dev: JSON.parse(JSON.stringify(this.config.dev)) };
+            let devConfig = {
+                dev: JSON.parse(JSON.stringify(this.config.dev)),
+            };
             devConfig.dev.load = devConfig.dev.outputControls.load;
             devConfig.dev.load.min = devConfig.dev.load.range[0];
             devConfig.dev.load.max = devConfig.dev.load.range[1];
@@ -568,7 +584,7 @@ export const api_mixin = {
 
             delete devConfig.dev.outputControls;
 
-            if (typeof devConfig.dev.address !== 'number') {
+            if (typeof devConfig.dev.address !== "number") {
                 devConfig.dev.address = parseInt(devConfig.dev.address);
             }
 
@@ -578,47 +594,54 @@ export const api_mixin = {
             this.api_save({ wifi: this.config.wifi });
         },
         api_save_mqtt() {
-            if (typeof this.config.mqtt.interval !== 'number') {
+            if (typeof this.config.mqtt.interval !== "number") {
                 this.config.mqtt.interval = parseInt(this.config.mqtt.interval);
             }
-            if (typeof this.config.mqtt.port !== 'number') {
+            if (typeof this.config.mqtt.port !== "number") {
                 this.config.mqtt.port = parseInt(this.config.mqtt.port);
             }
             this.api_save({ mqtt: this.config.mqtt });
         },
         api_save_pvo() {
-            if (typeof this.config.pvo.time_offset !== 'number') {
-                this.config.pvo.time_offset = parseInt(this.config.pvo.time_offset);
+            if (typeof this.config.pvo.time_offset !== "number") {
+                this.config.pvo.time_offset = parseInt(
+                    this.config.pvo.time_offset
+                );
             }
-            if (typeof this.config.pvo.system_id !== 'number') {
+            if (typeof this.config.pvo.system_id !== "number") {
                 this.config.pvo.system_id = parseInt(this.config.pvo.system_id);
             }
             this.api_save({ pvo: this.config.pvo });
         },
         api_save(config) {
-            axios.post("/api/config", config).then(response => {
-                if (response.data === "OK") {
-                    this.m_dialog.headline = "Info";
-                    this.m_dialog.message = "Config updated. The page will reload now!";
-                    this.m_dialog.show = true;
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 3000);
-                } else {
+            axios
+                .post("/api/config", config)
+                .then((response) => {
+                    if (response.data === "OK") {
+                        this.m_dialog.headline = "Info";
+                        this.m_dialog.message =
+                            "Config updated. The page will reload now!";
+                        this.m_dialog.show = true;
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    } else {
+                        this.m_dialog.headline = "Error";
+                        this.m_dialog.message = `Could not update config:\n${response.data}`;
+                        this.m_dialog.show = true;
+                    }
+                })
+                .catch((error) => {
                     this.m_dialog.headline = "Error";
-                    this.m_dialog.message = `Could not update config:\n${response.data}`;
+                    this.m_dialog.message = `Could not update config:\n${error}`;
                     this.m_dialog.show = true;
-                }
-            }).catch(error => {
-                this.m_dialog.headline = "Error";
-                this.m_dialog.message = `Could not update config:\n${error}`;
-                this.m_dialog.show = true;
-            });
+                });
         },
         api_submit_ota() {
             if (this.status.ota.file == null) {
                 this.m_dialog.headline = "Error";
-                this.m_dialog.message = "No software binary selected to upload. Please select a file first.";
+                this.m_dialog.message =
+                    "No software binary selected to upload. Please select a file first.";
                 this.m_dialog.show = true;
                 return;
             }
@@ -630,26 +653,28 @@ export const api_mixin = {
             }
             let formData = new FormData();
             formData.append("data", this.status.ota.file);
-            axios.post("ota", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }).then(() => {
-                this.status.ota.progress = 0;
-                this.m_dialog.headline = "Update successfull";
-                this.m_dialog.message = "The software update was successfull. The page will reload now!";
-                this.m_dialog.show = true;
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
-            }).catch(error => {
-                this.status.ota.progress = 0;
-                this.m_dialog.headline = "Error";
-                this.m_dialog.message = `The software update failed.\n${error}`;
-                this.m_dialog.show = true;
-            });
+            axios
+                .post("ota", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                })
+                .then(() => {
+                    this.status.ota.progress = 0;
+                    this.m_dialog.headline = "Update successfull";
+                    this.m_dialog.message =
+                        "The software update was successfull. The page will reload now!";
+                    this.m_dialog.show = true;
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                })
+                .catch((error) => {
+                    this.status.ota.progress = 0;
+                    this.m_dialog.headline = "Error";
+                    this.m_dialog.message = `The software update failed.\n${error}`;
+                    this.m_dialog.show = true;
+                });
         },
-    }
-}
-
-
+    },
+};

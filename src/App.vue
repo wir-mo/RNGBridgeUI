@@ -361,6 +361,12 @@
                   </v-row>
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
+                  <v-select
+                    v-model="config.dev.type"
+                    :items="deviceOptions"
+                    label="Device type"
+                  ></v-select>
+
                   <v-text-field
                     label="Device name"
                     v-model="config.dev.name"
@@ -788,6 +794,12 @@ export default {
           text: "Access point",
           value: "ap",
         },
+      ],
+      deviceOptions: [
+        { text: "Dummy (test data)", value: "dummy" },
+        { text: "Renogy controller", value: "renogy" },
+        { text: "Renogy battery", value: "renogyBattery" },
+        { text: "Epever controller", value: "epever" },
       ],
 
       controllerErrors: {

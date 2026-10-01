@@ -1,2 +1,2 @@
-# RNGBridgeUI
-User interface of RNGBridge V2
+# RSBridgeUI
+User interface of RSBridge V2
